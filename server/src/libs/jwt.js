@@ -1,23 +1,23 @@
 import jwt from 'jsonwebtoken'
-import {config} from 'dotenv'
+import { config } from 'dotenv'
 config()
 
-function createAccessToken (payload) {
+function createAccessToken(payload) {
     const KEY = process.env.TOKEN_SECRET
     return new Promise((resolve, reject) => {
         jwt.sign(
             payload,
             KEY,
-        {
-            expiresIn: '1d'
-        }, (err, token) => {
-            if (err) {
-                reject(err);
+            {
+                expiresIn: '1d'
+            }, (err, token) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(token)
             }
-            resolve(token)
-        }
-        )
-    })
+        );
+    });
 }
 
-export default createAccessToken
+export default createAccessToken;
