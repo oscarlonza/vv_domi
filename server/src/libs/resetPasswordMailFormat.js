@@ -1,5 +1,5 @@
 
-function getVerificationCodeMailFormatted(verificationCode) {
+export const getResetPasswordMailFormatted = (password) => {
     return `
     <style>
     body {
@@ -50,12 +50,12 @@ function getVerificationCodeMailFormatted(verificationCode) {
 </style>
 <div class=container>
     <div class=header>
-        <h1>¡Bienvenido a Domi Store!</h1>
+        <h1>¡Accede a Domi Store!</h1>
     </div>
     <div class=content>
-        <p>Estamos emocionados de tenerte con nosotros. Para completar tu acceso, por favor usa el siguiente código de verificación:
-        <div class=code>${verificationCode}</div>
-        <p>Este código es válido por 2 minutos y solo puede ser usado una vez.
+        <p>Conocemos tu recorrido y por eso estamos atentos a tus necesidades, esta es tu nueva contraseña:</p>
+        <div class=code>${password}</div>
+        <p>Con esta nueva contraseña podrás volver a ingresar a la tienda Domi, por seguridad te sugerimos que la cambies por una nueva.</p>
     </div>
     <div class=footer>
         <p>Si tienes alguna pregunta, no dudes en contactarnos. ¡Felices compras!</p>
@@ -63,7 +63,4 @@ function getVerificationCodeMailFormatted(verificationCode) {
 </div>
     `;
 }
-
-export default getVerificationCodeMailFormatted;
-
 

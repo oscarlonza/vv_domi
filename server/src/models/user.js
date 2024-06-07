@@ -58,14 +58,39 @@ function extendSchema (schema, definition, options) {
 
 const userPasswordValidationSchema = extendSchema(userSchema);
 
+const messagePasswordValidation = 'La contraseña debe tener como mínimo una letra mayúscula, una minúscula, un numero, un carácter especial  # $ % &, no se permiten espacios en blanco, y debe tener como mínimo 8 caracteres y máximo 15 caracteres.';
+
 userPasswordValidationSchema.path('password')
 .validate(async (password) => {
+    return validarPassword(password);
+}, messagePasswordValidation);
+
+function validarPassword(password){
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$%&])[^\s]{8,15}$/;
     return passwordRegex.test(password);
-}, 'La contraseña debe tener como mínimo una letra mayúscula, una minúscula, un numero, un carácter especial  # $ % &, no se permiten espacios en blanco, y debe tener como mínimo 8 caracteres y máximo 15 caracteres.');
+}
+
+const changePasswordSchema = new Schema({
+    
+    oldPassword: {
+        type: String,
+        required: [true, 'Contraseña actual requerida'],
+    },
+    newPassword: {
+        type: String,
+        required: [true, 'Contraseña nueva requerida'],
+    }
+});
+
+changePasswordSchema.path('oldPassword')
+.validate(async (oldPassword) => {
+    return validarPassword(oldPassword);
+}, messagePasswordValidation);
+
 
 
 export const User = model('User', userSchema);
 export const UserPassword = model('UserPassword', userPasswordValidationSchema);
+export const ChangePassword = model('ChangePassword', changePasswordSchema);
 
 

@@ -7,30 +7,46 @@ export const validateUserExits = async (req, res, next) => {
     if (!userFound)
         return res.status(404).json({ message: 'Usuario no encontrado' });
 
+    const user = {
+        id,
+        is_verified: userFound.is_verified,
+        role: userFound.role,
+        verification_code : userFound.verification_code
+    }
+
+    req.user = user;
+
     next();
 }
 
 export const validateUserIsVerified = async (req, res, next) => {
-    const { id } = req.user;
-    const userFound = await User.findById(id);
+    const { is_verified } = req.user;
 
-    if (!userFound.is_verified)
+    if (!is_verified)
         return res.status(404).json({ message: 'Usuario no verificado' });
 
     next();
 }
 
 export const validateUserIsNotVerified = async (req, res, next) => {
-    const { id } = req.user;
-    const userFound = await User.findById(id);
-
-    if (userFound.is_verified)
+    const { is_verified } = req.user;
+    
+    if (is_verified)
         return res.status(404).json({ message: 'Usuario verificado' });
 
     next();
 }
 
-export const validateEmailAlreadyExists = async (req, res, next) => {
+export const validateUserIsAdmin = async (req, res, next) => {
+    const { role } = req.user;
+
+    if (role !== 'superadmin')
+        return res.status(403).json({ message: 'No tienes permisos para realizar esta acción' });
+
+    next();
+}
+
+export const validateEmailDoesntExists = async (req, res, next) => {
     const { email } = req.body;
     const user = await User.findOne({ email });
 
@@ -40,12 +56,12 @@ export const validateEmailAlreadyExists = async (req, res, next) => {
     next();
 }
 
-export const validateUserIsAdmin = async (req, res, next) => {
-    const { id } = req.user;
-    const userFound = await User.findById(id);
+export const validateEmailAlreadyExists = async (req, res, next) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
 
-    if (userFound.role !== 'superadmin')
-        return res.status(403).json({ message: 'No tienes permisos para realizar esta acción' });
+    if (!user)
+        return res.status(404).json({ message: 'El correo electrónico no existe' });
 
     next();
 }
