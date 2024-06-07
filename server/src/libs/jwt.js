@@ -12,7 +12,7 @@ function createAccessToken(payload) {
                 expiresIn: '1d'
             }, (err, token) => {
                 if (err) {
-                    reject(err);
+                    reject(new Error(err));
                 }
                 resolve(token)
             }

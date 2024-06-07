@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { register, login, logout, profile, verify } from "../controllers/authController.js";
 import validateToken from "../middlewares/validateToken.js";
+import {validateUserIsVerified, validateUserAlreadyExists} from "../middlewares/validateUser.js";
 
 const router = Router();
 
 // ruta abierta
-router.post('/register', register);
+router.post('/register', validateUserAlreadyExists, register);
 
 // ruta abierta
 router.post('/login', login);
@@ -14,9 +15,9 @@ router.post('/login', login);
 router.post('/logout', logout);
 
 // ruta protegida para verificar el usuario
-router.get('/verify', validateToken, verify);
+router.post('/verify', validateToken, verify);
 
 // ruta protegida el profile es un ejemplo
-router.get('/profile', validateToken, profile);
+router.get('/profile', validateToken, validateUserIsVerified, profile);
 
 export default router;

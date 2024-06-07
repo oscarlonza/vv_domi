@@ -10,7 +10,7 @@ const validateToken = (req, res, next) => {
     jwt.verify(
         token,
         KEY, (err, user) => {
-            if (err) return res.status(401).json({ message: 'token invalido' });
+            if (err) return res.status(401).json({ message: 'Token inválido' });
             req.user = user;
             next();
         }
