@@ -44,9 +44,28 @@ const userSchema = new Schema({
 
 userSchema.path('email')
     .validate(async (email) => {
-        console.log("Testing email >> ", email);
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
     }, 'Correo electrónico inválido');
 
-export default model('User', userSchema);
+
+function extendSchema (schema, definition, options) {
+    return new Schema(
+      Object.assign({}, schema.obj, definition),
+      options
+    );
+  }
+
+const userPasswordValidationSchema = extendSchema(userSchema);
+
+userPasswordValidationSchema.path('password')
+.validate(async (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$%&])[^\s]{8,15}$/;
+    return passwordRegex.test(password);
+}, 'La contraseña debe tener como mínimo una letra mayúscula, una minúscula, un numero, un carácter especial  # $ % &, no se permiten espacios en blanco, y debe tener como mínimo 8 caracteres y máximo 15 caracteres.');
+
+
+export const User = model('User', userSchema);
+export const UserPassword = model('UserPassword', userPasswordValidationSchema);
+
+

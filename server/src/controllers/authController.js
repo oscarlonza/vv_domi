@@ -1,4 +1,4 @@
-import User from '../models/user.js';
+import { User, UserPassword } from '../models/user.js';
 import bcrypt from 'bcryptjs';
 import createAccessToken from '../libs/jwt.js';
 import nodemailer from 'nodemailer';
@@ -8,13 +8,8 @@ export async function register(req, res) {
     try {
         const { name, email, address, password } = req.body;
 
-        if(!name) return res.status(400).json({ message: "Nombre requerido" });
-        if (!email) return res.status(400).json({ message: "Correo requerido" });
-        if (!address) return res.status(400).json({ message: "Dirección requerida" });
-        if (!password) return res.status(400).json({ message: "Contraseña requerida" });
-        if (!isPasswordValid(password)) {
-            return res.status(400).json({ message: 'La contraseña debe tener como mínimo una letra mayúscula, una minúscula, un numero, un carácter especial  # $ % &, no se permiten espacios en blanco, y debe tener como mínimo 8 caracteres y máximo 15 caracteres.' });
-        }
+        const userValid = new UserPassword({ name, email, address, password });
+        await userValid.validate();
 
         const newUser = new User({
             name,
@@ -25,14 +20,14 @@ export async function register(req, res) {
 
         let userSaved = await newUser.save();
 
-        res.json({
+        return res.json({
             name: userSaved.name,
             email: userSaved.email,
             address: userSaved.address
         });
 
     } catch (error) {
-        res.status(500).json({ message: error.message.replace('User validation failed: ', '') });
+        return res.status(500).json({ message: error.message.replace('User validation failed: ', '').replace('UserPassword validation failed: ', '') });
     }
 
 }
@@ -57,28 +52,31 @@ export async function login(req, res) {
         const user = {
             name: userFound.name,
             email: userFound.email,
+            address: userFound.address,
             role: userFound.role
         };
 
-        //El usaurio requiere verificación
+        //El usuario requiere verificación
         if (!userFound.is_verified) {
-            userFound.verification_code = Math.floor(Math.random() * 1000000).toString().padStart(6, "0");
-            const userSaved = await userFound.save();
-            sendVerificationCode(userSaved);
+            sendVerificationCode(userFound);
             return res.status(403).json(user);
         }
 
-        res.json(user);
+        return res.json(user);
 
     } catch (error) {
         res.cookie('token', '', { expires: new Date(0) });
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 }
 
-export function logout(req, res) {
+export function logout(req, res, internal) {
     res.cookie('token', '', { expires: new Date(0) });
-    res.sendStatus(200);
+
+    if (internal)
+        return res.status(200);
+    else
+        return res.sendStatus(200);
 }
 
 export async function verify(req, res) {
@@ -91,8 +89,6 @@ export async function verify(req, res) {
         if (!ping) return res.status(400).json({ message: "Código de verificación requerido" });
 
         const userFound = await User.findById(id);
-        if (!userFound)
-            return res.status(400).json({ message: 'Usuario no encontrado' });
 
         if (userFound.verification_code !== ping)
             return res.status(400).json({ message: 'Ping inválido' });
@@ -101,8 +97,8 @@ export async function verify(req, res) {
         userFound.verification_code = null;
         userFound.save();
 
-        return res.json({ message: 'Usuario verificado'});
-        
+        return logout(req, res, true).json({ message: 'Usuario verificado' });
+
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -111,8 +107,6 @@ export async function verify(req, res) {
 export async function profile(req, res) {
     try {
         const userFound = await User.findById(req.user.id);
-        if (!userFound)
-            return res.status(404).json({ message: 'Usuario no encontrado' });
 
         return res.send({
             id: userFound._id,
@@ -120,18 +114,51 @@ export async function profile(req, res) {
             email: userFound.email
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 }
 
-function isPasswordValid(password) {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$%&])[^\s]{8,15}$/;
-    return passwordRegex.test(password);
+export async function resendcode(req, res) {
+    try {
+        const userFound = await User.findById(req.user.id);
+
+        if (!userFound.is_verified) {
+            sendVerificationCode(userFound);
+        }
+
+        return res.status(200).json({ message: 'Nuevo código enviado' });
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+export async function changePassword(req, res) {
+    try {
+        const { password } = req.body;
+        const userFound = await User.findById(req.user.id);
+
+        const userValid = new UserPassword({ password });
+        await userValid.validate(['password']);
+
+        userFound.password = await bcrypt.hash(password || '', 10);
+        userFound.is_verified = false;
+        await userFound.save();
+
+        return logout(req, res, true).json({ message: 'Contraseña actualizada satisfactoriamente' });
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message.replace('User validation failed: ', '').replace('UserPassword validation failed: ', '') });
+    }
+
 }
 
 async function sendVerificationCode(user) {
 
-    const { email, verification_code } = user;
+    user.verification_code = Math.floor(Math.random() * 1000000).toString().padStart(6, "0");
+    const userSaved = await user.save();
+
+    const { email, verification_code } = userSaved;
     const smtp_host = process.env.SMTP_HOST;
     const smtp_port = process.env.SMTP_PORT;
     const smtp_tls = process.env.SMTP_TLS;

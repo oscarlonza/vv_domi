@@ -1,23 +1,29 @@
 import { Router } from "express";
-import { register, login, logout, profile, verify } from "../controllers/authController.js";
+import { register, login, logout, profile, verify, resendcode, changePassword } from "../controllers/authController.js";
 import validateToken from "../middlewares/validateToken.js";
-import {validateUserIsVerified, validateUserAlreadyExists} from "../middlewares/validateUser.js";
+import {validateUserExits, validateUserIsVerified, validateEmailAlreadyExists, validateUserIsNotVerified} from "../middlewares/validateUser.js";
 
 const router = Router();
 
-// ruta abierta
-router.post('/register', validateUserAlreadyExists, register);
+// endpoint de registro de usuario.
+router.post('/register', validateEmailAlreadyExists, register);
 
-// ruta abierta
+// endpoint de inicio de sesión.
 router.post('/login', login);
 
-// ruta abierta
+// endpoint para cerrar sesión.
 router.post('/logout', logout);
 
-// ruta protegida para verificar el usuario
-router.post('/verify', validateToken, verify);
+// endpoint para verificar el correo del usuario.
+router.post('/verify', validateToken, validateUserExits, verify);
 
-// ruta protegida el profile es un ejemplo
-router.get('/profile', validateToken, validateUserIsVerified, profile);
+// endpoint para cambiar la constraseña del usuario.
+router.post('/changepassword', validateToken, validateUserExits, validateUserIsVerified, changePassword);
+
+// endpoint para reenviar código de verificación.
+router.post('/resendcode', validateToken, validateUserExits, validateUserIsNotVerified, resendcode);
+
+// endpoint para validar usuario autenticado y verificado.
+router.get('/profile', validateToken, validateUserExits, validateUserIsVerified, profile);
 
 export default router;
