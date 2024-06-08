@@ -4,7 +4,7 @@ campo usuario debe aceptar mínimo 5 caracteres y máximo 10 caracteres, no se p
 campo contraseña debe tener como mínimo una letra mayúscula, una minúscula, un numero, un carácter especial  # $ % &, no se permiten espacios en blanco, y debe tener como mínimo 8 caracteres y máximo 15 caracteres.
 */
 
-const {validarUsuario, validarPassword} = require("../src/utilsLogin");
+const {validarUsuario, validarPassword} = require("../src/utilsUser");
 
 describe("validarUsuario", ()=> {
 
