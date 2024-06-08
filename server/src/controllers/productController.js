@@ -19,7 +19,7 @@ export const createMultipleProducts = async (req, res) => {
             const image = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQV2ernxmFQGWFguDZjoSy_e5kgSTAcnvEBkunQO3POpIaEGcMg';
             const newProduct = new Product({ name, price, description, quantity, image });
             await newProduct.save();
-            products.push(newProduct);
+            products.push({id:newProduct._id, name, price, description, quantity, image});
         }
 
         return res.status(201).json(products);
