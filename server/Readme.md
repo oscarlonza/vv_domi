@@ -17,3 +17,14 @@
     - mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.6
     - mongodb://localhost:27017
     
+## Ejecución en ambiente de desarrollo
+
+1. Instalar dependencias
+    > npm install
+
+2. Configurar variables de entorno
+    - Crear archivo .env
+    - Agregar las variables teniendo en encuenta la estructura de .example.env 
+
+3. Ejecutar script dev
+    > npm run dev
