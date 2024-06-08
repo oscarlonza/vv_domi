@@ -1,3 +1,4 @@
+
 function validarNombreProducto(nombreProducto) {
 
     return (nombreProducto && nombreProducto !== '' && nombreProducto.length <= 100) ? true : false || false;
@@ -28,10 +29,20 @@ function validarImagen(file) {
     return true;
 }
 
+function validarEliminarProducto(idProducto) {
+    return idProducto == 1 ? true : false;
+}
+
+function validarModificarProducto(idProducto) {
+    return idProducto == 10 ? true : false;
+}
+
 module.exports = {
     validarNombreProducto,
     validarDescProducto,
     validarPrecio,
     validarCantidad,
-    validarImagen
+    validarImagen,
+    validarEliminarProducto,
+    validarModificarProducto
 };
