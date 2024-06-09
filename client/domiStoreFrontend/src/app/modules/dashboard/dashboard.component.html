@@ -1,0 +1,56 @@
+<mat-drawer-container class="example-container">
+    <mat-drawer #drawer mode="side" opened>
+        <div class="login-logo">
+            <img src="" alt="logo" />
+        </div>
+
+        <mat-list role="list">
+            <h2>Menu</h2>
+            <mat-list-item role="listitem" routerLinkActive="active" routerLink="product">
+                <mat-icon matListItemIcon>inventory</mat-icon>
+
+                <div matListItemTitle>Productos</div>
+                <div matListItemLine>Gestión de productos</div>
+            </mat-list-item>
+            <mat-list-item role="listitem" routerLinkActive="active" routerLink="order">
+                <mat-icon matListItemIcon>shopping_cart</mat-icon>
+
+                <div matListItemTitle>Pedidos</div>
+                <div matListItemLine>Gestión de pedidos</div>
+            </mat-list-item>
+            <!-- <mat-list-item role="listitem" routerLinkActive="active" routerLink="match">
+                <mat-icon matListItemIcon>sports_and_outdoors</mat-icon>
+                <div matListItemTitle>Match</div>
+                <div matListItemLine>Administracion de partidos</div>
+            </mat-list-item> -->
+        </mat-list>
+
+
+        <!--  <img [class.rebote]="rebote" (click)="rebote = !rebote" class="ball" src="assets/ball.png" alt="" height="50px">
+        <img class="grass" src="assets/grass.png" alt="" height="50px"> -->
+
+    </mat-drawer>
+    <mat-drawer-content>
+        <mat-toolbar color="primary">
+            <button (click)="drawer.toggle()" mat-icon-button class="example-icon"
+                aria-label="Example icon-button with menu icon">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <span>Domi Store</span>
+            <span class="example-spacer"></span>
+            <span>Admnistrador</span>
+
+            <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+                <mat-icon>face</mat-icon>
+            </button>
+
+            <button (click)="logout()" mat-icon-button class="example-icon"
+                aria-label="Example icon-button with share icon">
+                <mat-icon>logout</mat-icon>
+            </button>
+        </mat-toolbar>
+        <div class="content">
+            <router-outlet></router-outlet>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>
