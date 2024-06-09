@@ -1,1 +1,83 @@
-<p>products works!</p>
+<div class="shadow mt-3">
+    <div class="card {{ class }}">
+        <button mat-fab matTooltip="Nuevo sorteo" class="fab" color="primary" (click)="openDialogProduct({}, 'new')">
+            <mat-icon>add</mat-icon>
+        </button>
+        <div class="card-header margin-top d-flex align-items-center justify-content-between flex-wrap"
+            style="gap: 1rem">
+            <div
+                class="m-1 d-flex align-items-baseline justify-content-start flex-column flex-sm-column text-left flex-wrap">
+                <h2 *ngIf="title != ''">
+                    {{ title | slice : 0 : 100 | uppercase }}
+                </h2>
+                <p>{{ description | slice : 0 : 200 }}</p>
+            </div>
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Buscar</mat-label>
+                <input matInput type="text" placeholder="Buscar" (keyup)="applyFilter($event)" #input />
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+        </div>
+
+        <div class="card-body overflow-auto p-0">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                    <td mat-cell *matCellDef="let element">
+                        <span class="mobile-label mr-2">Nombre:</span>
+                        {{ element.name }}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>Descripción</th>
+                    <td mat-cell *matCellDef="let element">
+                        <span class="mobile-label mr-2">Descripción:</span>
+                        {{ element.description }}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="price">
+                    <th mat-header-cell *matHeaderCellDef>Precio</th>
+                    <td mat-cell *matCellDef="let element">
+                        <span class="mobile-label mr-2">Precio:</span>
+                        {{ element.price }}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="quantity">
+                    <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+                    <td mat-cell *matCellDef="let element">
+                        <span class="mobile-label mr-2">Cantidad:</span>
+                        {{ element.quantity }}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="image">
+                    <th mat-header-cell *matHeaderCellDef>Imagen</th>
+                    <td mat-cell *matCellDef="let element">
+                        <span class="mobile-label mr-2">Imagen:</span>
+                        <img src="{{ element.image}}" alt="" height="70px" />
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef class="pr-3 pl-3">Acciones</th>
+                    <td mat-cell *matCellDef="let element" class="p-1 pr-3 pl-3" style="white-space: nowrap">
+                        <button mat-icon-button (click)="openDialogProduct(element, 'edit')" matTooltip="Editar producto">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="openDialogProduct(element, 'delete')"
+                            matTooltip="Eliminar producto">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+        </div>
+        <mat-paginator [length]="dataParams.total" [pageSize]="dataParams.size"
+        [pageSizeOptions]="pageSizeOptions.length>0?pageSizeOptions:[10,20,50,100]" showFirstLastButtons
+        aria-label="Select page of periodic elements" class="card-footer" (page)="handlePage($event)">
+    </mat-paginator>
+    </div>
+</div>
