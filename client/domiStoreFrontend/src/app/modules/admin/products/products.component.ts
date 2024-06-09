@@ -1,52 +1,65 @@
 import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ProductService } from '../../../services/product.service';
 type ActionType = 'new' | 'edit' | 'delete';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule,HttpClientModule],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss'
 })
 export default class ProductsComponent {
-  displayedColumns: string[] = ['teamName', 'teamImage', 'actions'];
+  displayedColumns: string[] = ['name', 'description','price','quantity','image','actions'];
   class: string = ""
   title: string = "Listado de productos"
   pageSizeOptions: number[] = [10, 20, 50, 100]
   description: string = "Seleccione un registro para modificar"
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   static switch: any = 0;
   dataSource: any = [];
+  dataParams: any = {
+    total: 0,
+    size: 10,
+    page: 1
+  };
   constructor(private dialog: MatDialog,
+    public productService: ProductService
   ) { }
   ngOnInit() {
 
-    this.loadExistingTeams();
-    this.dataSource.paginator = this.paginator;
+    this.getProducts();
   }
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-  }
-  loadExistingTeams() {
-    /*  let data = this.teamService.getTeams(); */
-
-    /* this.dataSource = new MatTableDataSource<any>(data); */
+  getProducts() {
+    this.productService.getProducts(this.dataParams).subscribe({
+      next: (res: any) => {
+        console.log('res',res);
+        this.dataSource = new MatTableDataSource(res.products);
+        this.dataParams.total = res.products.length;
+      },
+      error: (err: any) => {
+        this.dataSource = new MatTableDataSource([]);
+        this.dataParams.total = 0;
+        console.error('Error fetching data: ', err)},
+      complete: () => console.log('Data fetching complete')
+    });
   }
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+    const filtro = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filtro.trim().toLowerCase();
   }
-  openDialogTeam(data: any, action: any) {
+  handlePage(e: PageEvent){
+    this.dataParams.size = e.pageSize;
+    this.dataParams.page = e.pageIndex+1;
+    this.getProducts();
+  }
+  openDialogProduct(data: any, action: any) {
     const dialogConfig = new MatDialogConfig();
     data.action = action;
     dialogConfig.data = data;
@@ -95,27 +108,30 @@ export class DialogProduct implements OnInit {
     /*    private teamService: TeamService */
   ) {
     this.form = this.formBuilder.group({
-      teamName: ["", [Validators.required]],
-      idTeam: [null]
+      name: ["", [Validators.required]],
+      description: ["", [Validators.required]],
+      price: ["", [Validators.required]],
+      quantity: ["", [Validators.required]]
     });
   }
   ngOnInit() {
     this.action = this.data?.action;
-    this.loadExistingTeams();
     switch (this.action) {
       case 'new':
-        this.title = 'Crear equipo';
+        this.title = 'Crear producto';
         break;
       case 'edit':
-        this.title = 'Editar equipo';
+        this.title = 'Editar producto';
         this.form.setValue({
-          teamName: this.data.teamName,
-          idTeam: this.data.idTeam
+          name: this.data.name,
+          price: this.data.price,
+          quantity: this.data.quantity,
+          description: this.data.description
         })
-        this.previewUrl = this.data.teamImage || 'assets/flag.png'
+        this.previewUrl = this.data.image
         break;
       case 'delete':
-        this.title = 'Eliminar equipo';
+        this.title = 'Eliminar producto';
         break;
     }
   }
@@ -138,11 +154,7 @@ export class DialogProduct implements OnInit {
 
     }
   }
-  loadExistingTeams() {
-    /* this.teamData = this.teamService.getTeams()
-    this.teamService.setTeams(this.teamData); */
 
-  }
   openSnackBar(message: string, action: string, type: string) {
     this.snackBar.open(message, action, {
       duration: 3000,
