@@ -19,7 +19,7 @@ export const createMultipleProducts = async (req, res) => {
             const image = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQV2ernxmFQGWFguDZjoSy_e5kgSTAcnvEBkunQO3POpIaEGcMg';
             const newProduct = new Product({ name, price, description, quantity, image });
             await newProduct.save();
-            products.push({id:newProduct._id, name, price, description, quantity, image});
+            products.push(newProduct.toJSON());
         }
 
         return res.status(201).json(products);
@@ -47,7 +47,7 @@ export const getPaginatedProducts = async (req, res) => {
             limit: limitNumber,
             totalPages: totalPages,
             totalProducts: totalProducts,
-            products: products
+            products: products.map(product => product.toJSON())
         });
     } catch (error) {
         return res.status(500).json({ message: error.message });
@@ -63,7 +63,7 @@ export const getProductById = async (req, res) => {
             return res.status(404).json({ message: 'Producto no encontrado' });
         }
 
-        return res.status(200).json(product);
+        return res.status(200).json(product.toJSON());
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

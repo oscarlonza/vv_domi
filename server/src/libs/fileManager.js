@@ -2,6 +2,8 @@
 import fs from 'fs';
 import path from 'path';
 
+
+
 /*
 crea una funcion con nombre addFileToRepository el cual recibirá como parametro una imagen en base64, debes guardar la imagen en un directorio accesible del servidor express, y retornar la ruta de la imagen. Validar que la imagen no pese mas de 5MB.
 */
@@ -18,9 +20,10 @@ export const addFileToRepository = (image) => {
     // Generate a unique filename for the image
     const filename = `${Date.now()}.jpg`;
 
-    const path = `${__dirname}--${'../public/images'}`;
+    //const path = `${__dirname}--${'../../public/images'}`;
     // Define the directory where the image will be saved
-    const directory = path.join(__dirname, '../public/images');
+    //const directory = path.join(__dirname, '../../public/images/');
+    const {directory} = new URL('../../public/images');
 
     // Create the directory if it doesn't exist
     if (!fs.existsSync(directory)) {
