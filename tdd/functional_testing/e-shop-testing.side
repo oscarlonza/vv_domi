@@ -1,0 +1,88 @@
+{
+  "id": "00451ddf-d299-4205-a0fa-1e7b7a573647",
+  "version": "2.0",
+  "name": "e-shop-testing",
+  "url": "https://demos.telerik.com",
+  "tests": [{
+    "id": "3565e1f4-3d42-406a-8867-3083f56af285",
+    "name": "login and details",
+    "commands": [{
+      "id": "896c21a1-7391-457a-a411-6b9f8a989845",
+      "comment": "",
+      "command": "open",
+      "target": "/aspnet-core/eshop/Account/Login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "7da286c1-778f-4e51-9e13-3e471c5f6c06",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1382x744",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9e2079fa-70c3-4bba-8953-4295211b25c6",
+      "comment": "",
+      "command": "click",
+      "target": "id=Email",
+      "targets": [
+        ["id=Email", "id"],
+        ["name=Email", "name"],
+        ["css=#Email", "css:finder"],
+        ["xpath=//input[@id='Email']", "xpath:attributes"],
+        ["xpath=//form[@id='loginForm']/div/div/div/span/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "86c8dcd3-d98b-425e-aa1b-1e3ec93b6b78",
+      "comment": "",
+      "command": "click",
+      "target": "id=Password",
+      "targets": [
+        ["id=Password", "id"],
+        ["name=Password", "name"],
+        ["css=#Password", "css:finder"],
+        ["xpath=//input[@id='Password']", "xpath:attributes"],
+        ["xpath=//form[@id='loginForm']/div/div[2]/div/span/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "ce418d9b-4ae9-48fc-a7e1-d617a3d30620",
+      "comment": "",
+      "command": "click",
+      "target": "css=.k-button",
+      "targets": [
+        ["css=.k-button", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//form[@id='loginForm']/div[2]/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "c37f291f-d355-4b9b-adb0-1887cddbc8c2",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=#favoritesBadgeItem .k-menu-link-text",
+      "targets": [
+        ["css=#favoritesBadgeItem .k-menu-link-text", "css:finder"],
+        ["xpath=//li[@id='favoritesBadgeItem']/a/span", "xpath:idRelative"],
+        ["xpath=//div/ul/li[2]/a/span", "xpath:position"],
+        ["xpath=//span[contains(.,'Favorites')]", "xpath:innerText"]
+      ],
+      "value": "FavoritesX"
+    }]
+  }],
+  "suites": [{
+    "id": "7135ada1-1153-47a3-9834-96d0917973e3",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["3565e1f4-3d42-406a-8867-3083f56af285"]
+  }],
+  "urls": ["https://demos.telerik.com/"],
+  "plugins": []
+}

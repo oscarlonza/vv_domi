@@ -92,5 +92,3 @@ changePasswordSchema.path('oldPassword')
 export const User = model('User', userSchema);
 export const UserPassword = model('UserPassword', userPasswordValidationSchema);
 export const ChangePassword = model('ChangePassword', changePasswordSchema);
-
-
