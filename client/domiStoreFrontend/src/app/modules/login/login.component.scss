@@ -1,0 +1,53 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  .login-logo {
+    display: flex;
+    justify-content: center;
+  
+    img {
+      width: 50%;
+    }
+  }
+  .full-width{
+      width: 100%;
+      
+  }
+  
+  button{
+      margin-top: 20px;
+  }
+  
+  
+  .container-image {
+    width: 100%;
+    position: absolute;
+  }
+  
+  .container-image img {
+    width: 100%;
+    height: 100px;
+    background-repeat: repeat;
+    background-size: cover;
+    position: absolute;
+    bottom: 0;
+  }
+  
+  // .container-image::after {
+  //   content: "";
+  //   width: 100%;
+  //   /* El height controla el alto del degradado */
+  //   height: 150px;
+  //   position: absolute;
+  //   left: 0;
+  //   /* Puedes cambiar la posición del degrado desde aquí */
+  //   bottom: 0;
+  //   /* Si cambias la posición, reemplaza también la dirección en el gradiente */
+  //   background-image: linear-gradient(to bottom, #ffffff, transparent);
+    
+  // }
