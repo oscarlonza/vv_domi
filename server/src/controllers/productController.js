@@ -74,9 +74,6 @@ export const getProductById = async (req, res) => {
 export const createProduct = async (req, res) => {
     const { name, price, description, quantity, image } = req.body;
     try {
-        //TODO add image to bag of images
-        
-
         const imageUrl = addFileToRepository(image);
 
         const newProduct = await Product({ name, price, description, quantity, image: imageUrl });

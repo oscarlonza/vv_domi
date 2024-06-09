@@ -3,7 +3,7 @@ Las rutas para consumir el controlador de productos
 */
 
 import { Router } from "express";
-import { createMultipleProducts, getPaginatedProducts, getProductById/*, createProduct */ } from "../controllers/productController.js";
+import { createMultipleProducts, getPaginatedProducts, getProductById, createProduct } from "../controllers/productController.js";
 import { createDefaultImage } from "../libs/createDefaultImage.js";
 import validateToken from "../middlewares/validateToken.js";
 import { validateUserExits, validateUserIsVerified, validateUserIsAdmin } from "../middlewares/validateUser.js";
@@ -18,7 +18,7 @@ productRouter.get('/:id', getProductById);
 
 productRouter.post('/createdefaultimage', createDefaultImage);
 
-//productRouter.post('/', validateToken, validateUserExits, validateUserIsVerified, validateUserIsAdmin, createProduct);
+productRouter.post('/', validateToken, validateUserExits, validateUserIsVerified, validateUserIsAdmin, createProduct);
 
 // endpoint para validar usuario autenticado y verificado.
 //router.get('/profile', validateToken, validateUserExits, validateUserIsVerified, profile);
