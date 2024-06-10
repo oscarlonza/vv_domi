@@ -1,5 +1,7 @@
 import { addFileToRepository } from '../libs/fileManager.js';
 import { Product } from '../models/product.js';
+import { Comment } from '../models/comment.js';
+
 import faker from 'faker';
 
 /*
@@ -14,12 +16,28 @@ export const createMultipleProducts = async (req, res) => {
             const name = faker.commerce.productName();
             const price = faker.commerce.price();
             const description = faker.lorem.sentence();
-            const quantity = faker.random.number(50);
+            const quantity = faker.datatype.number({ min: 0, max: 50 });
             //TODO Cambiar ruta por la imagen del frontend
-            const image = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQV2ernxmFQGWFguDZjoSy_e5kgSTAcnvEBkunQO3POpIaEGcMg';
+            const image = '/images/default.png';
             const newProduct = new Product({ name, price, description, quantity, image });
             await newProduct.save();
-            products.push(newProduct.toJSON());
+
+            const nComments = faker.datatype.number({ min: 0, max: 50 });
+            for (let j = 0; j < nComments; j++) {
+                const comment = faker.lorem.sentence();
+                const rating = faker.datatype.number({ min: 1, max: 5 });
+                const newComment = new Comment({
+                    comment, rating,
+                    user: faker.internet.userName(),
+                    product: newProduct._id
+                });
+                await newComment.save();
+                newProduct.comments.push(newComment.rating);
+            }
+
+            const productSaved = await newProduct.save();
+
+            products.push(productSaved.toJSON());
         }
 
         return res.status(201).json(products);
@@ -30,11 +48,11 @@ export const createMultipleProducts = async (req, res) => {
 
 // Obtener los productos paginados
 export const getPaginatedProducts = async (req, res) => {
-    const { page, limit } = req.query;
-    const pageNumber = parseInt(page) || 1;
-    const limitNumber = parseInt(limit) || 10;
-
     try {
+        const { page, limit } = req.query;
+        const pageNumber = parseInt(page) || 1;
+        const limitNumber = parseInt(limit) || 10;
+
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limitNumber);
 
@@ -56,8 +74,9 @@ export const getPaginatedProducts = async (req, res) => {
 
 // Obtener un producto por su ID
 export const getProductById = async (req, res) => {
-    const { id } = req.params;
     try {
+        const { id } = req.params;
+
         const product = await Product.findById(id);
         if (!product) {
             return res.status(404).json({ message: 'Producto no encontrado' });
@@ -71,8 +90,9 @@ export const getProductById = async (req, res) => {
 
 // Crear un nuevo producto
 export const createProduct = async (req, res) => {
-    const { name, price, description, quantity, image } = req.body;
     try {
+        const { name, price, description, quantity, image } = req.body;
+
         const imageUrl = addFileToRepository(image);
 
         const newProduct = await Product({ name, price, description, quantity, image: imageUrl });
@@ -86,10 +106,10 @@ export const createProduct = async (req, res) => {
 
 // Actualizar un producto existente
 export const updateProduct = async (req, res) => {
-    const { id } = req.params;
-    const { name, price, description, quantity, image } = req.body;
     try {
-        
+        const { id } = req.params;
+        const { name, price, description, quantity, image } = req.body;
+
         const productFound = await Product.findById(id);
         if (!productFound)
             return res.status(404).json({ message: 'Producto no encontrado' });
@@ -112,15 +132,77 @@ export const updateProduct = async (req, res) => {
 
 // Eliminar un producto existente
 export const deleteProduct = async (req, res) => {
-    const { id } = req.params;
     try {
+        const { id } = req.params;
+
         const deletedProduct = await Product.findByIdAndDelete(id);
         if (!deletedProduct) {
             return res.status(404).json({ message: 'Producto no encontrado' });
         }
+
+        await Comment.deleteMany({ product: deletedProduct._id });
+
         res.status(200).json({ message: 'Producto eliminado correctamente' });
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+export const createComment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name: userName } = req.user;
+        const { comment, rating } = req.body;
+
+        const productFound = await Product.findById(id);
+        if (!productFound)
+            return res.status(404).json({ message: 'Producto no encontrado' });
+
+        const newComment = new Comment({ comment, rating, product: productFound._id, userName });
+        await newComment.save();
+
+        productFound.comments.push(newComment.rating);
+        await productFound.save();
+
+        return res.status(201).json({ comment: newComment.comment, rating: newComment.rating });
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message.replace('Comment validation failed: ', '') });
+    }
+
+};
+
+export const getPaginatedCommentsByProductId = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+        const { page, limit } = req.query;
+        const pageNumber = parseInt(page) || 1;
+        const limitNumber = parseInt(limit) || 10;
+
+        const productFound = await Product.findById(id);
+
+        if (!productFound)
+            return res.status(404).json({ message: 'Producto no encontrado' });
+
+        const totalComments = await Comment.countDocuments({ product: productFound._id });
+        const totalPages = Math.ceil(totalComments / limitNumber);
+
+        const comments = await Comment
+            .find({ product: productFound._id })
+            .skip((pageNumber - 1) * limitNumber)
+            .limit(limitNumber);
+
+        return res.status(200).json({
+            page: pageNumber,
+            limit: limitNumber,
+            totalPages: totalPages,
+            totalComments: totalComments,
+            comments: comments.map(comment => comment.toJSON())
+        });
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
 };
 

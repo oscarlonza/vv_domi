@@ -6,7 +6,7 @@ const userSchema = new Schema({
         trim: true,
         required: [true, 'Nombre requerido'],
         minLength: [5, 'El nombre debe tener al menos 3 caracteres'],
-        maxLength: [50, 'El nombre debe tener menos de 50 caracteres'],
+        maxLength: [50, 'El nombre debe tener máximo 50 caracteres'],
 
     },
     email: {
@@ -24,7 +24,7 @@ const userSchema = new Schema({
         trim: true,
         required: [true, 'Dirección requerida'],
         minLength: [10, 'La dirección debe tener al menos 10 caracteres'],
-        maxLength: [50, 'La dirección debe tener menos de 100 caracteres']
+        maxLength: [50, 'La dirección debe tener máximo 100 caracteres']
     },
     role: {
         type: String,

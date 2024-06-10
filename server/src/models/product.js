@@ -21,36 +21,37 @@ import { model, Schema } from 'mongoose';
 const productSchema = new Schema({
     name: {
         type: String,
-        required: true,
-        maxlength: 100,
+        required: [true, 'Nombre requerido'],
+        maxlength: [100, 'El nombre debe tener máximo 100 caracteres'],
     },
     description: {
         type: String,
-        maxlength: 200,
+        maxlength: [200, 'La descripción debe tener máximo 200 caracteres'],
     },
     price: {
         type: Number,
-        required: true,
+        required: [true, 'Precio requerido'],
+        min: [0, 'El precio no puede ser negativo'],
     },
     quantity: {
         type: Number,
-        required: true,
+        required: [true, 'Cantidad requerida'],
     },
     image: {
         type: String,
-        //validate: {
-        //    validator: function(url) {
-        //        return /.*\.(jpg|png)$/.test(url);
-        //    },
-        //    message: props => `${props.value} no es un formato de imagen válido.`
-        //},
-        //maxlength: 5 * 1024 * 1024,
-    }
+    },
+    comments: [],
 }, { timestamps: true });
 
 productSchema.methods.toJSON = function () {
-    const { __v, status, createdAt, updatedAt, _id: id, ...data } = this.toObject();
-    return { id, ...data };
+    const { __v, status, createdAt, updatedAt, comments, _id: id, ...data } = this.toObject();
+    const totalComments = comments.length;
+    return {
+        id, ...data,
+        comments: totalComments,
+        rating: totalComments > 0 ?
+            comments.reduce((acc, rating) => acc + rating, 0) / totalComments : 0
+    };
 }
 
 export const Product = model('Product', productSchema);
