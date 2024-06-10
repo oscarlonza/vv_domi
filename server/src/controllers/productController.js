@@ -69,7 +69,6 @@ export const getProductById = async (req, res) => {
     }
 };
 
-
 // Crear un nuevo producto
 export const createProduct = async (req, res) => {
     const { name, price, description, quantity, image } = req.body;
@@ -81,7 +80,7 @@ export const createProduct = async (req, res) => {
 
         return res.status(201).json(newProduct);
     } catch (error) {
-        return res.status(500).json({ message: 'Error al crear el producto' });
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -91,18 +90,23 @@ export const updateProduct = async (req, res) => {
     const { name, price, description, quantity, image } = req.body;
     try {
         //TODO add image to bag of images
-
-        const updatedProduct = await Product.findByIdAndUpdate(
-            id,
-            { name, price, description },
-            { new: true }
-        );
-        if (!updatedProduct) {
+        const productFound = await Product.findById(id);
+        if (!productFound)
             return res.status(404).json({ message: 'Producto no encontrado' });
-        }
-        res.status(200).json(updatedProduct);
+
+        if (productFound.image !== image)
+            productFound.image = addFileToRepository(image);
+
+        productFound.name = name;
+        productFound.price = price;
+        productFound.description = description;
+        productFound.quantity = quantity;
+
+        await productFound.save();
+
+        res.status(200).json(productFound.toJSON());
     } catch (error) {
-        res.status(500).json({ message: 'Error al actualizar el producto' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -116,7 +120,7 @@ export const deleteProduct = async (req, res) => {
         }
         res.status(200).json({ message: 'Producto eliminado correctamente' });
     } catch (error) {
-        res.status(500).json({ message: 'Error al eliminar el producto' });
+        res.status(500).json({ message: error.message });
     }
 };
 
