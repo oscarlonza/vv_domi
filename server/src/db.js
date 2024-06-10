@@ -6,6 +6,11 @@ const db = async () => {
     await mongoose.connect(process.env.MONGODB);
     console.log('<<<< DB is Connected >>>>');
 
+    createSuperAdmin();
+
+}
+
+const createSuperAdmin = async () => {
     const userAdmin = await User.findOne({ name: 'Super Admin' });
     if (userAdmin) return;
 
@@ -22,9 +27,9 @@ const db = async () => {
     let userSaved = await newUser.save();
 
     if (!userSaved)
-        console.log('Error creating superadmin');
+        console.log('Error creating the firsst user (superadmin)');
     else
-        console.log('Superadmin created successfully');
+        console.log('The first user (superadmin) was created successfully');
 }
 
 export default db;
