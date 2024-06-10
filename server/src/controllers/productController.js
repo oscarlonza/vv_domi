@@ -89,7 +89,7 @@ export const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { name, price, description, quantity, image } = req.body;
     try {
-        //TODO add image to bag of images
+        
         const productFound = await Product.findById(id);
         if (!productFound)
             return res.status(404).json({ message: 'Producto no encontrado' });
