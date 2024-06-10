@@ -49,14 +49,25 @@ export const createMultipleProducts = async (req, res) => {
 // Obtener los productos paginados
 export const getPaginatedProducts = async (req, res) => {
     try {
-        const { page, limit } = req.query;
+        const { page, limit, filter } = req.query;
         const pageNumber = parseInt(page) || 1;
         const limitNumber = parseInt(limit) || 10;
 
-        const totalProducts = await Product.countDocuments();
+        const regexValue = filter || '';
+        const findParameters = {
+            $or: [
+                { name: { $regex: regexValue, $options: 'i' } },
+                { description: { $regex: regexValue, $options: 'i' } }
+            ]
+        };
+
+        const totalProducts = await Product
+            .countDocuments(findParameters);
+
         const totalPages = Math.ceil(totalProducts / limitNumber);
 
-        const products = await Product.find()
+        const products = await Product
+            .find(findParameters)
             .skip((pageNumber - 1) * limitNumber)
             .limit(limitNumber);
 
