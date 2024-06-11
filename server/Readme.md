@@ -17,38 +17,6 @@
     - mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.6
     - mongodb://localhost:27017
 
-
-### replication config
-
-#### Manual configuration 
-
-
-1. Initialize replication
-    > docker exec -it domi-mongodb bash
-    > mongosh
-    > rs.initiate()
-        {
-            info2: 'no configuration specified. Using a default configuration for the set',
-            me: 'c06fd58b03ac:27017',
-            ok: 1
-        }
-        rs0
-
-#### Compose
-
-1. Launch docker compose
-    > docker-compose -f .\mongodb-compose.yml up -d
-
-2. Validate connection
-    > docker exec -it server-domi-mongodb-1 bash
-        >> mongosh
-
-    Replace "server-domi-mongodb-1" with your container name.
-
-3. Add the replicateSet=rs0 parameter to your string connection
-    Examples of string connection 
-    - mongodb://localhost:27017/?replicaSet=rs0
-    
 ## Ejecución en ambiente de desarrollo
 
 1. Instalar dependencias
