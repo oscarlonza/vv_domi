@@ -14,7 +14,6 @@ export const createOrder = async (req, res) => {
         let orderSaved = {};
 
         const session = await mongoose.startSession();
-
         session.startTransaction();
 
         try {
@@ -74,3 +73,97 @@ export const getOrders = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+export const updateOrder = async (req, res) => {
+
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const { id: userId, role } = req.user;
+
+        if (!status)
+            throw new Error('status: Estado es requiredo');
+
+        const filter = { _id: id };
+        const isAdmin = role === 'superadmin';
+        if (!isAdmin) filter.user = userId;
+
+        const orderFound = await Order.findOne(filter);
+        const { status: orderStatus } = orderFound;
+
+        if (!orderFound)
+            throw new Error('Orden no encontrada');
+
+        validateAvailableStatus(isAdmin, orderStatus, status);
+
+        if (['canceled', 'rejected'].includes(status)) {
+
+            await rejectOrCancelOrderTransaction(orderFound, status);
+        }
+        else {
+            orderFound.status = status;
+            await orderFound.save();
+        }
+
+        return res.status(200).json({ message: 'Estado actualizado satisfactoriamente' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+const validateAvailableStatus = (isAdmin, orderStatus, status) => {
+    let availableStates = [];
+
+    if (!isAdmin) {
+
+        switch (orderStatus) {
+            case 'created':
+            case 'preparing':
+                availableStates = ['canceled'];
+                break;
+            case 'delivered':
+                availableStates = ['received'];
+        }
+    }
+    else {
+
+        switch (orderStatus) {
+            case 'created':
+                availableStates = ['preparing', 'rejected'];
+                break;
+            case 'preparing':
+                availableStates = ['delivered'];
+                break;
+            case 'delivered':
+                availableStates = ['preparing'];
+        }
+    }
+
+    if (!availableStates.includes(status))
+        throw new Error('status: Estado no disponible');
+};
+
+const rejectOrCancelOrderTransaction = async (orderFound, status) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+
+        const { products } = orderFound;
+
+        for (let i = 0; i < products.length; i++) {
+            const product = products[i];
+            const productFound = await Product.findById(product.product);
+            productFound.quantity += product.quantity;
+            await productFound.save({ session });
+        }
+
+        orderFound.status = status;
+        await orderFound.save({ session });
+
+        await session.commitTransaction();
+        await session.endSession();
+    } catch (error) {
+        await session.abortTransaction();
+        throw error;
+    }
+}
