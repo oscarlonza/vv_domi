@@ -18,7 +18,7 @@ export const getResetPasswordMailFormatted = (password) => {
     }
 
     .header {
-        background-color: #ff4081;
+        background-color: #3f51b5;
         color: #fff;
         padding: 10px;
         text-align: center;
@@ -35,7 +35,7 @@ export const getResetPasswordMailFormatted = (password) => {
         font-size: 24px;
         margin: 20px 0;
         padding: 10px;
-        border: 1px dashed #ff4081;
+        border: 1px dashed #3f51b5;
         display: inline-block
     }
 

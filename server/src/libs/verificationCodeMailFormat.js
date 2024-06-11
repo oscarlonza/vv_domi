@@ -18,7 +18,8 @@ export const getVerificationCodeMailFormatted = (verificationCode) => {
     }
 
     .header {
-        background-color: #ff4081;
+    
+        background-color: #3f51b5;
         color: #fff;
         padding: 10px;
         text-align: center;

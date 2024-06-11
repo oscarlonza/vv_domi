@@ -27,7 +27,7 @@ const createSuperAdmin = async () => {
     let userSaved = await newUser.save();
 
     if (!userSaved)
-        console.log('Error creating the firsst user (superadmin)');
+        console.log('Error creating the first user (superadmin)');
     else
         console.log('The first user (superadmin) was created successfully');
 }
