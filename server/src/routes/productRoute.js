@@ -25,7 +25,4 @@ productRouter.post('/:id/comments', validateToken, validateUserExits, validateUs
 
 productRouter.get('/:id/comments/paginated', getPaginatedCommentsByProductId);
 
-// endpoint para validar usuario autenticado y verificado.
-//router.get('/profile', validateToken, validateUserExits, validateUserIsVerified, profile);
-
 export default productRouter;

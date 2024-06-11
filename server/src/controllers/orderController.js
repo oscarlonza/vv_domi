@@ -111,6 +111,54 @@ export const updateOrder = async (req, res) => {
     }
 };
 
+export const getPaginatedProductsPurchasedPerUser = async (req, res) => {
+    try {
+        const { id: userId } = req.user.id;
+        const { page, limit, filter } = req.query;
+        const pageNumber = parseInt(page) || 1;
+        const limitNumber = parseInt(limit) || 10;
+
+        const orders = (await Order.find({ user: userId }));
+
+        
+
+        /*
+        
+                const regexValue = filter || '';
+                const findParameters = {
+                    $or: [
+                        { name: { $regex: regexValue, $options: 'i' } },
+                        { description: { $regex: regexValue, $options: 'i' } }
+                    ],
+                    quantity: { $gt: 0 }
+                };
+        
+                const totalProducts = await Product
+                    .countDocuments(findParameters);
+        
+                const totalPages = Math.ceil(totalProducts / limitNumber);
+        
+                const products = await Product
+                    .find(findParameters)
+                    .skip((pageNumber - 1) * limitNumber)
+                    .limit(limitNumber);
+        */
+
+        return res.json(orders);
+
+        return res.status(200).json({
+            page: pageNumber,
+            limit: limitNumber,
+            totalPages: totalPages,
+            totalProducts: totalProducts,
+            products: products.map(product => product.toJSON())
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+
 const validateAvailableStatus = (isAdmin, orderStatus, status) => {
     let availableStates = [];
 
