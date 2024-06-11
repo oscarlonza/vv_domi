@@ -10,6 +10,7 @@ export const validateUserExits = async (req, res, next) => {
     const user = {
         id,
         name: userFound.name,
+        address: userFound.address,
         is_verified: userFound.is_verified,
         role: userFound.role,
         verification_code : userFound.verification_code

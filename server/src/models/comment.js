@@ -28,7 +28,7 @@ const commentSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 commentSchema.methods.toJSON = function () {
-    const { __v, createdAt, updatedAt, _id: id, product,...data } = this.toObject();
+    const { __v, createdAt, updatedAt, _id, product, ...data } = this.toObject();
     return { ...data };
 };
 
