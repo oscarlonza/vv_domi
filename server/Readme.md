@@ -15,7 +15,7 @@
 
     Replace "server-domi-mongodb-1" with your container name.
 
-5. Add the replicateSet=rs0 parameter in the your string connection
+5. Add the replicateSet=rs0 parameter to your string connection
     Examples of string connection 
     - mongodb://localhost:27017/?replicaSet=rs0
     
