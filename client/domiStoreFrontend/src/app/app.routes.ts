@@ -25,6 +25,16 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'store',
+        loadComponent: () => import('./modules/store/store.component'),
+        children: [
+            {
+                path: 'home',
+                loadComponent: () => import('./modules/home/home.component').then(m => m.default)
+            }
+        ]
+    },
+    {
         path: '**',
         redirectTo: 'login'
     }
