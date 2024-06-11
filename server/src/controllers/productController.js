@@ -58,7 +58,8 @@ export const getPaginatedProducts = async (req, res) => {
             $or: [
                 { name: { $regex: regexValue, $options: 'i' } },
                 { description: { $regex: regexValue, $options: 'i' } }
-            ]
+            ],
+            quantity: { $gt: 0 }
         };
 
         const totalProducts = await Product
