@@ -16,7 +16,7 @@ export const createOrder = async (req, res) => {
         const session = await mongoose.startSession();
 
         session.startTransaction();
-        
+
         try {
 
             for (let i = 0; i < n; i++) {
@@ -64,7 +64,10 @@ export const createOrder = async (req, res) => {
 
 export const getOrders = async (req, res) => {
     try {
-        const orders = await Order.find({ user: req.user.id });
+
+        const { role } = req.user;
+
+        const orders = await Order.find(role === 'superadmin' ? {} : { user: req.user.id });
 
         res.json(orders.map(order => order.toJSON()));
     } catch (error) {
