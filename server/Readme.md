@@ -1,7 +1,9 @@
 # Server project for Domi Store
 
 
-## Mongo db Docker configuration
+## Mongo db
+
+** The replication is required replication to execute transactions.
 
 1. Donwload Mongo image
     > docker pull mongo

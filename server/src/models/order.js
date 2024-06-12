@@ -30,7 +30,11 @@ const orderSchema = new mongoose.Schema({
             type: Number,
             required: [true, 'Precio requerido'],
             min: [0, 'El precio no puede ser menor a 1'],
-        }
+        },
+        image: {
+            type: String,
+            required: [true, 'Imagen requerida'],
+        },
     }],
     total: {
         type: Number,

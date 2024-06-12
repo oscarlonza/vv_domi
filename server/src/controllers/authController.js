@@ -49,6 +49,8 @@ export async function login(req, res) {
         if (!passwordGood) return res.status(400).json({ message });
 
         const token = await createAccessToken({ id: userFound._id });
+        
+        res.header('Access-Control-Allow-Credentials', 'true');
         console.log('token > ', token);
         res.cookie('token', token);
 
