@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { DOCUMENT } from "@angular/common";
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class AuthService {
       }),
       withCredentials: true
     };
-    return this.http.post(`http://localhost:8012/api/auth/login`, params,http_options);
+    return this.http.post(`${environment.apiUrl}/auth/login`, params,http_options);
   }
   getCookie(name: string): string | null {
     const value = `; ${document.cookie}`;
