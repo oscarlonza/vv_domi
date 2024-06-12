@@ -24,6 +24,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatRadioModule } from '@angular/material/radio';
+import { StarRatingModule } from 'angular-star-rating';
 
 
 
@@ -55,13 +56,14 @@ import { MatRadioModule } from '@angular/material/radio';
     DragDropModule,
     MatProgressBarModule,
     MatSortModule,
-    MatRadioModule,MatSnackBarModule,
+    MatRadioModule, MatSnackBarModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    StarRatingModule.forRoot()
   ],
-  exports:[
+  exports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -87,11 +89,12 @@ import { MatRadioModule } from '@angular/material/radio';
     DragDropModule,
     MatProgressBarModule,
     MatSortModule,
-    MatRadioModule,MatSnackBarModule,
+    MatRadioModule, MatSnackBarModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    StarRatingModule
   ]
 })
 export class SharedModule { }

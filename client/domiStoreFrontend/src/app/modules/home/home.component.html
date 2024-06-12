@@ -1,1 +1,48 @@
-<p>home works!</p>
+<section class="main-container">
+    <h2>Productos destacados</h2>
+    <div class="courses-container">
+        <div class="single-course" *ngFor="let item of products">
+            <div class="course-image">
+                <img src="{{ item.image }}" alt="" loading="lazy">
+                <span class="category">{{ item.category? item.category : 'Tecno' }}</span>
+                <div class="cribbon"></div>
+                <div class="course-info">
+                    <span (click)="openDialog(item)" class="material-icons">info</span>
+                </div>
+            </div>
+            <div class="course-title">
+                <h3>
+                    <a (click)="goToProductDetail(item.id)">{{ item.name }}</a>
+                </h3>
+                <div class="profesor-info">
+                    <p>Comentarios: <span>{{ item.comments }}</span></p>
+                </div>
+                <div class="ranking">
+                    <star-rating [starType]="'svg'"
+                    (starClickChange)="addStar($event.rating, item)"
+                    [disabled]="!item.voted"
+                    [rating]="4"
+                    [staticColor]="'ok'" [step]="0.5" [showHalfStars]="true"></star-rating>
+                    <p>{{4.5}} {{4.5<2 ? 'estrella':'estrellas'}} | {{5}} votos</p>
+                </div>
+            </div>
+            <div class="course-detail">
+                <div class="price">
+                    <h3>{{ item.moneda }} {{ item.price | currency }}</h3>
+                    <div class="price-info">
+                        <span
+                            class="material-icons"
+                            style="max-width: 24px;"
+                            matTooltip={{item.mensajeMoneda}}>
+                            paid
+                        </span>
+                    </div>
+                </div>
+                
+                <button mat-raised-button (click)="goToBuy(item)">
+                    <mat-icon>payment</mat-icon> Comprar
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
