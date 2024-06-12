@@ -19,6 +19,7 @@ import {
 /* import { CodeOtpComponent } from '../../components/code-otp/code-otp.component'; */
 import { NotificationImplService } from '../../services/notification.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -39,30 +40,33 @@ export default class LoginComponent {
   fb = inject(FormBuilder);
   router = inject(Router);
   private _bottomSheet = inject(MatBottomSheet);
+  public auth = inject(AuthService);
   public notificationService = inject(NotificationImplService);
 
   validationCode = signal(false);
 
   loginForm = this.fb.group({
-    username: ['', Validators.required],
+    email: ['', Validators.required],
     password: ['', Validators.required],
   });
 
   signIn() {
-    if (
-      this.loginForm.value.password === '12345' &&
-      this.loginForm.value.username === 'admin'
-    ) {
-      this.openBottomSheet();
-    } else {
-
-      this.notificationService.errorNotification(
-        'Credenciales inválidas, por favor intente de nuevo.'
-      );
-    }
+    const { email, password } = this.loginForm.value;
+    this.auth.login({email, password}).subscribe({
+      next: (res: any) => {
+        console.log('res',res);
+        const token = this.auth.getCookie('token');
+        console.log('token',token);
+        this.goToDashboard();
+      },
+      error: (err: any) => {
+        this.notificationService.errorNotification(err.error.message);
+        console.error('Error fetching data: ', err)},
+      complete: () => console.log('Data fetching complete')
+    });
   }
 
-  openBottomSheet(): void {
+  goToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 }

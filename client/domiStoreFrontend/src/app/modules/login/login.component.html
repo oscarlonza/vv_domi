@@ -9,23 +9,23 @@
 
                 <form [formGroup]="loginForm" (ngSubmit)="signIn()">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Username" formControlName="username" />
+                        <input matInput placeholder="Username" formControlName="email" />
 
-                        @if(loginForm.controls['username'].hasError('required')){
-                        <mat-error> Username is required </mat-error>
+                        @if(loginForm.controls['email'].hasError('required')){
+                        <mat-error>El correo eletronico es requerido</mat-error>
 
                         }
                     </mat-form-field>
                     <mat-form-field class="full-width">
                         <input matInput placeholder="Password" type="password" formControlName="password" />
                         <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
-                            Password is required
+                            La contraseña es requerida
                         </mat-error>
                     </mat-form-field>
 
-                    <button mat-raised-button class="full-width" color="primary" type="submit"
+                    <button mat-raised-button class="full-width" color="primary" type="submit" (click)="signIn()"
                         [disabled]="loginForm.invalid">
-                        Login
+                        Iniciar Sesión
                     </button>
                 </form>
 
