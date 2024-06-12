@@ -48,8 +48,10 @@ export class RequestService {
         _url = _url.includes("http") ? _url : getDomain() + "/" + _url
         if (_headers) {
           _headers["Content-Type"] = "application/json"
+          _headers['Accept']= 'application/json'
         } else {
           _headers = { "Content-Type": "application/json" }
+          _headers = { "Accept": "application/json" }
         }
         if(token) {
           _headers["Authorization"] =`Bearer ${environment.accessToken}`
@@ -76,8 +78,10 @@ export class RequestService {
         _url = _url.includes("http") ? _url : getDomain() + "/" + _url
         if (_headers) {
           _headers["Content-Type"] = "application/json"
+          _headers['Accept']= 'application/json'
         } else {
           _headers = { "Content-Type": "application/json" }
+          _headers = { "Accept": "application/json" }
         }
         if(token) {
           _headers["Authorization"] =`Bearer ${environment.accessToken}`
