@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { AuthService } from '../../services/auth.service';
+import { SharedModule } from '../shared/shared.module';
 
 
 @Component({
@@ -18,6 +19,7 @@ import { AuthService } from '../../services/auth.service';
     MatIconModule,
     MatButtonModule,
     MatListModule,
+    SharedModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -31,5 +33,8 @@ export default class DashboardComponent {
   logout() {
     localStorage.removeItem('token');
     this.router.navigate(['/login']);
+  }
+  isActive(route: string): boolean {
+    return this.router.url.includes(route);
   }
 }

@@ -20,6 +20,7 @@ import {
 import { NotificationImplService } from '../../services/notification.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -55,8 +56,7 @@ export default class LoginComponent {
     this.auth.login({email, password}).subscribe({
       next: (res: any) => {
         console.log('res',res);
-        const token = this.auth.getCookie('token');
-        console.log('token',token);
+        environment.accessToken=this.auth.getCookie('token')!;
         this.goToDashboard();
       },
       error: (err: any) => {

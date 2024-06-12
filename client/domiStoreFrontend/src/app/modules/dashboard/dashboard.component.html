@@ -4,19 +4,19 @@
             <img src="../../../assets/images/domi blanco.png" alt="logo" />
         </div>
 
-        <mat-list role="list">
+        <mat-list role="list" class="my-list-container">
             <h2>Menu</h2>
             <mat-list-item role="listitem" routerLinkActive="active" routerLink="product">
-                <mat-icon matListItemIcon>inventory</mat-icon>
+                <mat-icon matListItemIcon [ngClass]="{'active-text-color': isActive('product')}">inventory</mat-icon>
 
-                <div matListItemTitle>Productos</div>
-                <div matListItemLine>Gestión de productos</div>
+                <div matListItemTitle [ngClass]="{'active-text-color': isActive('product')}">Productos</div>
+                <div matListItemLine [ngClass]="{'active-text-color': isActive('product')}">Gestión de productos</div>
             </mat-list-item>
             <mat-list-item role="listitem" routerLinkActive="active" routerLink="order">
-                <mat-icon matListItemIcon>shopping_cart</mat-icon>
+                <mat-icon matListItemIcon [ngClass]="{'active-text-color': isActive('order')}">shopping_cart</mat-icon>
 
-                <div matListItemTitle>Pedidos</div>
-                <div matListItemLine>Gestión de pedidos</div>
+                <div matListItemTitle [ngClass]="{'active-text-color': isActive('order')}">Pedidos</div>
+                <div matListItemLine [ngClass]="{'active-text-color': isActive('order')}">Gestión de pedidos</div>
             </mat-list-item>
             <!-- <mat-list-item role="listitem" routerLinkActive="active" routerLink="match">
                 <mat-icon matListItemIcon>sports_and_outdoors</mat-icon>
