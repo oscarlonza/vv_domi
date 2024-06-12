@@ -67,7 +67,9 @@ export const getOrders = async (req, res) => {
 
         const { role } = req.user;
 
-        const orders = await Order.find(role === 'superadmin' ? {} : { user: req.user.id });
+        const orders = await Order
+            .find(role === 'superadmin' ? {} : { user: req.user.id })
+            .sort({ createdAt: "desc" });
 
         res.json(orders.map(order => order.toJSON()));
     } catch (error) {
@@ -115,14 +117,21 @@ export const updateOrder = async (req, res) => {
 
 export const getPaginatedProductsPurchasedPerUser = async (req, res) => {
     try {
-        const { id: userId } = req.user.id;
+        const { id: userId } = req.user;
         const { page, limit, filter } = req.query;
         const pageNumber = parseInt(page) || 1;
         const limitNumber = parseInt(limit) || 10;
 
-        const orders = (await Order.find({ user: userId }));
+        const orders = await Order.find({ user: userId });
 
-        
+        const products = orders.map(order => order.products).flat();
+        const productsGrouped = Object.groupBy(products, ({ product }) => product);
+        let productsAvg = Object.values(productsGrouped)
+            .map(arr => arr.reduce((productsAvg, { id, name, priceAvg, quantity }) => ({ id, priceAvg: productsAvg.price + price / 2, quantity: productsAvg.quantity + +quantity }), { priceAvg: 0 }))
+asdasdasd
+
+        const totalProducts = productsAvg.length;
+        const totalPages = Math.ceil(totalProducts / limitNumber);
 
         /*
         
@@ -146,14 +155,12 @@ export const getPaginatedProductsPurchasedPerUser = async (req, res) => {
                     .limit(limitNumber);
         */
 
-        return res.json(orders);
-
         return res.status(200).json({
             page: pageNumber,
             limit: limitNumber,
             totalPages: totalPages,
             totalProducts: totalProducts,
-            products: products.map(product => product.toJSON())
+            products: productsAvg
         });
     } catch (error) {
         return res.status(500).json({ message: error.message });
