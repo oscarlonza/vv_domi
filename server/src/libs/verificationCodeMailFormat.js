@@ -36,7 +36,7 @@ export const getVerificationCodeMailFormatted = (verificationCode) => {
         font-size: 24px;
         margin: 20px 0;
         padding: 10px;
-        border: 1px dashed #ff4081;
+        border: 1px dashed #3f51b5;
         display: inline-block
     }
 

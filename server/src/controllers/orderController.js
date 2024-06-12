@@ -39,6 +39,7 @@ export const createOrder = async (req, res) => {
 
                 product.product = productFound._id;
                 product.name = productFound.name;
+                product.image = productFound.image;
                 productFound.quantity -= product.quantity;
                 await productFound.save({ session });
             }
@@ -89,10 +90,11 @@ export const updateOrder = async (req, res) => {
         if (!isAdmin) filter.user = userId;
 
         const orderFound = await Order.findOne(filter);
-        const { status: orderStatus } = orderFound;
 
         if (!orderFound)
             throw new Error('Orden no encontrada');
+
+        const { status: orderStatus } = orderFound;
 
         validateAvailableStatus(isAdmin, orderStatus, status);
 

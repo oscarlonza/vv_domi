@@ -12,12 +12,14 @@ Controlador para la entidad Product.
 export const createMultipleProducts = async (req, res) => {
     try {
         const products = [];
-        for (let i = 0; i < 200; i++) {
+        const { totalProducts } = req.body;
+        const total = parseInt(totalProducts) || 200;
+
+        for (let i = 0; i < total; i++) {
             const name = faker.commerce.productName();
             const price = faker.commerce.price();
             const description = faker.lorem.sentence();
             const quantity = faker.datatype.number({ min: 0, max: 50 });
-            //TODO Cambiar ruta por la imagen del frontend
             const image = '/images/default.png';
             const newProduct = new Product({ name, price, description, quantity, image });
             await newProduct.save();
@@ -33,11 +35,15 @@ export const createMultipleProducts = async (req, res) => {
                 });
                 await newComment.save();
                 newProduct.comments.push(newComment.rating);
+
+                console.log(`Comentario ${j + 1}/${nComments} creado correctamente`);
             }
 
             const productSaved = await newProduct.save();
 
             products.push(productSaved.toJSON());
+
+            console.log(`Producto ${i + 1}/${total} creado correctamente`);
         }
 
         return res.status(201).json(products);
