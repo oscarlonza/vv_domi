@@ -81,16 +81,24 @@ export const getOrders = async (req, res) => {
 export const getOrdersBetweenDates = async (req, res) => {
     try {
 
+        const { from, to } = req.query;
+
+        if(!from || !to)
+            throw new Error('from: Fecha desde requerida, to: Fecha hasta requirida');
         
-
-
-        const { role } = req.user;
+        let fromDate = new Date(`${from}T00:00:00.000Z`);
+        let toDate = new Date(`${to}T23:59:59.000Z`);
 
         const orders = await Order
-            .find(role === 'superadmin' ? {} : { user: req.user.id })
+            .find({
+                createdAt : {
+                    $gte: fromDate,
+                    $lte: toDate
+                }
+            })
             .sort({ createdAt: "desc" });
 
-        res.json(orders.map(order => order.toJSON()));
+        res.json(orders.map(order => order.toResumeJSON()));
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

@@ -65,4 +65,9 @@ orderSchema.methods.toJSON = function () {
     return { id, products: products.map(({ _id, ...item }) => ({ ...item })), ...data };
 };
 
+orderSchema.methods.toResumeJSON = function () {
+    const { __v, createdAt, updatedAt, _id: id, products, ...data } = this.toObject();
+    return { id, createdAt, ...data };
+};
+
 export const Order = mongoose.model('Order', orderSchema);
