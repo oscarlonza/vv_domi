@@ -55,8 +55,8 @@ export default class LoginComponent {
     this.auth.login({email, password}).subscribe({
       next: (res: any) => {
         console.log('res',res);
-        this.auth.getCookie('token')
-     
+        const token = this.auth.getCookie('token');
+        console.log('token',token);
         this.goToDashboard();
       },
       error: (err: any) => {

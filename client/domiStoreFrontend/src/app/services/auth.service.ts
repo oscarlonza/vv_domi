@@ -7,23 +7,27 @@ import { DOCUMENT } from "@angular/common";
 })
 export class AuthService {
 
-  constructor(public http: HttpClient,@Inject(DOCUMENT) private document: Document) { }
-  login(params:any){
+  constructor(public http: HttpClient) { }
+  login(params: any) {
     const http_options = {
       headers: new HttpHeaders({
-        'Access-Control-Allow-Origin': '*',
+        // Ejemplo: si necesitas enviar un contenido tipo JSON
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       }),
     };
-    return this.http.post(`http://localhost:8012/api/auth/login`,params,http_options);
+    return this.http.post(`http://localhost:8012/api/auth/login`, params);
   }
-  public getCookie(name: string) {
-    const cookies = this.document.cookie.split('; ')
-    for (let i = 0; i < cookies.length; i++) {
-        const [key, value] = cookies[i].split('=');
-        if (key === name) {
-            return decodeURIComponent(value);
-        }
+  getCookie(name: string): string | null {
+    const value = `; ${document.cookie}`;
+    console.log('values',value);
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        const cookieValue = parts.pop()?.split(';').shift(); // Usamos el operador de encadenamiento opcional
+        return cookieValue ?? null; // Usamos coalescencia nula para convertir 'undefined' en 'null'
     }
     return null;
 }
+
+
 }

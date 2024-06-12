@@ -28,10 +28,6 @@ export default class DashboardComponent {
   rebote = false;
   counter = 0;
   public auth = inject(AuthService);
-  ngOnInit(){
-    console.log(console.log(this.auth.getCookie('token')));
-
-  }
   logout() {
     localStorage.removeItem('token');
     this.router.navigate(['/login']);
