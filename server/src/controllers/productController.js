@@ -21,7 +21,7 @@ export const createMultipleProducts = async (req, res) => {
             const description = faker.lorem.sentence();
             const quantity = faker.datatype.number({ min: 0, max: 50 });
             //TODO Cambiar ruta por la imagen del frontend
-            const image = '../../../../assets/images/default.png';
+            const image = addFileToRepository(req);
             const newProduct = new Product({ name, price, description, quantity, image });
             await newProduct.save();
 
@@ -112,7 +112,7 @@ export const createProduct = async (req, res) => {
     try {
         const { name, price, description, quantity, image } = req.body;
 
-        const imageUrl = addFileToRepository(image);
+        const imageUrl = addFileToRepository(req, image);
 
         const newProduct = new Product({ name, price, description, quantity, image: imageUrl });
         await newProduct.save();
@@ -134,7 +134,7 @@ export const updateProduct = async (req, res) => {
             return res.status(404).json({ message: 'Producto no encontrado' });
 
         if (productFound.image !== image)
-            productFound.image = addFileToRepository(image);
+            productFound.image = addFileToRepository(req, image);
 
         productFound.name = name;
         productFound.price = price;

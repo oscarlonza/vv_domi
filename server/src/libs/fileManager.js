@@ -6,10 +6,11 @@ import { fileURLToPath } from 'url';
 /*
 crea una funcion con nombre addFileToRepository el cual recibirá como parametro una imagen en base64, debes guardar la imagen en un directorio accesible del servidor express, y retornar la ruta de la imagen. Validar que la imagen no pese mas de 5MB.
 */
-export const addFileToRepository = (image) => {
-
+export const addFileToRepository = (req, image) => {
+    const urlBase = `${req.protocol}://${req.get('host')}`;
+    
     if(image === undefined || image === null || image === '')
-        return '/images/default.png';
+        return `${urlBase}/images/default.png`;
 
     const extBase64 = image.substring(0, 3);
     let ext = '';
@@ -44,6 +45,6 @@ export const addFileToRepository = (image) => {
     fs.writeFileSync(imagePath, imageData);
 
     // Return the image path
-    return `/images/${filename}`;
+    return `${urlBase}/images/${filename}`;
 
 };
