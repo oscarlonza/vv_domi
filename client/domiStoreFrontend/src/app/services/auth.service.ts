@@ -1,23 +1,18 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { BasicResponse } from '../models/basic-response.model';
+import { RequestService } from '../../app/services/request.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(public http: HttpClient) { }
-  login(params: any) {
-    const http_options = {
-      headers: new HttpHeaders({
-        // Ejemplo: si necesitas enviar un contenido tipo JSON
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }),
-      withCredentials: true
-    };
-    return this.http.post(`${environment.apiUrl}/auth/login`, params,http_options);
+  constructor(private requestsService: RequestService) { }
+  async login(params: any): Promise<BasicResponse> {
+    const result= await this.requestsService.postLikeJSON(`${environment.apiUrl}/auth/login`, params,{},true);
+    return result;
   }
   getCookie(name: string): string | null {
     const value = `; ${document.cookie}`;

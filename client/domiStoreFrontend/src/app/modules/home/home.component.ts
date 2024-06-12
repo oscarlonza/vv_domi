@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { HeaderComponent } from './header/header.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from '../../services/product.service';
 import { SharedModule } from '../shared/shared.module';
+import { NotificationImplService } from '../../services/notification.service';
 
 
 @Component({
@@ -21,29 +22,25 @@ export default class HomeComponent {
     size: 10,
     page: 1
   };
-
+  public notificationService = inject(NotificationImplService);
   constructor(private dialog: MatDialog,
     public productService: ProductService
   ) { }
 
-  ngOnInit() {
-    this.getProducts();
+  async ngOnInit() {
+    await this.getProducts();
   }
 
-  getProducts() {
-    this.productService.getProducts(this.dataParams).subscribe({
-      next: (res: any) => {
-        console.log('res', res);
-        this.products = res.products;
-        this.dataParams.total = res.products.length;
-      },
-      error: (err: any) => {
-        this.products = [];
-        this.dataParams.total = 0;
-        console.error('Error fetching data: ', err)
-      },
-      complete: () => console.log('Data fetching complete')
-    });
+  async getProducts() {
+    const result = await this.productService.getProducts(this.dataParams);
+    if (result.success) {
+      this.products = result.data.products;
+      this.dataParams.total = result.data.products.length;
+    } else {
+      this.notificationService.errorNotification('Error en la solicitud');
+      this.products = [];
+      this.dataParams.total = 0;
+    }
   }
 
   openDialog(data: any): void {

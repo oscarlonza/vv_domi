@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -7,17 +7,19 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductService } from '../../../services/product.service';
+import { NotificationImplService } from '../../../services/notification.service';
+import { environment } from '../../../../environments/environment';
 type ActionType = 'new' | 'edit' | 'delete';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [SharedModule,HttpClientModule],
+  imports: [SharedModule, HttpClientModule],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss'
 })
 export default class ProductsComponent {
-  displayedColumns: string[] = ['name', 'description','price','quantity','image','actions'];
+  displayedColumns: string[] = ['name', 'description', 'price', 'quantity', 'image', 'actions'];
   class: string = ""
   title: string = "Listado de productos"
   pageSizeOptions: number[] = [10, 20, 50, 100]
@@ -26,36 +28,37 @@ export default class ProductsComponent {
   dataSource: any = [];
   dataParams: any = {
     total: 0,
-    size: 10,
+    limit: 10,
     page: 1
   };
+  public notificationService = inject(NotificationImplService);
   constructor(private dialog: MatDialog,
     public productService: ProductService
   ) { }
-  ngOnInit() {
+  async ngOnInit() {
 
-    this.getProducts();
+    await this.getProducts();
   }
-  getProducts() {
-    this.productService.getProducts(this.dataParams).subscribe({
-      next: (res: any) => {
-        this.dataSource = new MatTableDataSource(res.products);
-        this.dataParams.total = res.products.length;
-      },
-      error: (err: any) => {
-        this.dataSource = new MatTableDataSource([]);
-        this.dataParams.total = 0;
-        console.error('Error fetching data: ', err)},
-      complete: () => console.log('Data fetching complete')
-    });
+  async getProducts() {
+    const result = await this.productService.getProducts(this.dataParams);
+    console.log(environment.accessToken);
+    console.log('result', result);
+    if (result.success) {
+      this.dataSource = new MatTableDataSource(result.data.products);
+      this.dataParams.total = result.data.products.length;
+    } else {
+      this.notificationService.errorNotification('Error en la solicitud');
+      this.dataSource = new MatTableDataSource([]);
+      this.dataParams.total = 0;
+    }
   }
   applyFilter(event: Event) {
     const filtro = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filtro.trim().toLowerCase();
   }
-  handlePage(e: PageEvent){
+  handlePage(e: PageEvent) {
     this.dataParams.size = e.pageSize;
-    this.dataParams.page = e.pageIndex+1;
+    this.dataParams.page = e.pageIndex + 1;
     this.getProducts();
   }
   openDialogProduct(data: any, action: any) {

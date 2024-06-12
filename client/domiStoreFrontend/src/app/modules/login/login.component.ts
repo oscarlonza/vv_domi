@@ -51,19 +51,17 @@ export default class LoginComponent {
     password: ['', Validators.required],
   });
 
-  signIn() {
+  async signIn() {
     const { email, password } = this.loginForm.value;
-    this.auth.login({email, password}).subscribe({
-      next: (res: any) => {
-        console.log('res',res);
-        environment.accessToken=this.auth.getCookie('token')!;
-        this.goToDashboard();
-      },
-      error: (err: any) => {
-        this.notificationService.errorNotification(err.error.message);
-        console.error('Error fetching data: ', err)},
-      complete: () => console.log('Data fetching complete')
-    });
+    const result = await this.auth.login({ email, password });
+    console.log('result', result);
+    if (result.success) {
+      environment.accessToken = await this.auth.getCookie('token')!;
+      console.log('token', environment.accessToken);
+      this.goToDashboard();
+    } else {
+      this.notificationService.errorNotification(result.error.message);
+    }
   }
 
   goToDashboard(): void {
