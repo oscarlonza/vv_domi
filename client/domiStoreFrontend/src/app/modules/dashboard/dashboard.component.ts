@@ -5,6 +5,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -26,7 +27,11 @@ export default class DashboardComponent {
   router = inject(Router);
   rebote = false;
   counter = 0;
+  public auth = inject(AuthService);
+  ngOnInit(){
+    console.log(console.log(this.auth.getCookie('token')));
 
+  }
   logout() {
     localStorage.removeItem('token');
     this.router.navigate(['/login']);
