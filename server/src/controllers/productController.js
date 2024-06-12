@@ -18,7 +18,7 @@ export const createMultipleProducts = async (req, res) => {
             const description = faker.lorem.sentence();
             const quantity = faker.datatype.number({ min: 0, max: 50 });
             //TODO Cambiar ruta por la imagen del frontend
-            const image = '/images/default.png';
+            const image = '../../../../assets/images/default.png';
             const newProduct = new Product({ name, price, description, quantity, image });
             await newProduct.save();
 
