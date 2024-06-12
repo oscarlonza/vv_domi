@@ -40,7 +40,8 @@ export const createOrder = async (req, res) => {
                 product.product = productFound._id;
                 product.name = productFound.name;
                 product.image = productFound.image;
-                productFound.quantity -= product.quantity;
+                product.description = productFound.description,
+                    productFound.quantity -= product.quantity;
                 await productFound.save({ session });
             }
 
@@ -67,7 +68,9 @@ export const getOrders = async (req, res) => {
 
         const { role } = req.user;
 
-        const orders = await Order.find(role === 'superadmin' ? {} : { user: req.user.id });
+        const orders = await Order
+            .find(role === 'superadmin' ? {} : { user: req.user.id })
+            .sort({ createdAt: "desc" });
 
         res.json(orders.map(order => order.toJSON()));
     } catch (error) {
@@ -113,47 +116,62 @@ export const updateOrder = async (req, res) => {
     }
 };
 
-export const getPaginatedProductsPurchasedPerUser = async (req, res) => {
+export const getPaginatedProductsPurchasedByUser = async (req, res) => {
     try {
-        const { id: userId } = req.user.id;
+        const { id: userId } = req.user;
         const { page, limit, filter } = req.query;
         const pageNumber = parseInt(page) || 1;
         const limitNumber = parseInt(limit) || 10;
 
-        const orders = (await Order.find({ user: userId }));
+        const orders = await Order
+            .find({ user: userId })
+            .sort({ createdAt: "desc" });
 
-        
+        const products = {};
 
-        /*
-        
-                const regexValue = filter || '';
-                const findParameters = {
-                    $or: [
-                        { name: { $regex: regexValue, $options: 'i' } },
-                        { description: { $regex: regexValue, $options: 'i' } }
-                    ],
-                    quantity: { $gt: 0 }
-                };
-        
-                const totalProducts = await Product
-                    .countDocuments(findParameters);
-        
-                const totalPages = Math.ceil(totalProducts / limitNumber);
-        
-                const products = await Product
-                    .find(findParameters)
-                    .skip((pageNumber - 1) * limitNumber)
-                    .limit(limitNumber);
-        */
+        const filterValue = (filter || '').toLowerCase();
 
-        return res.json(orders);
+        orders.forEach((order) => {
+            order.products.forEach((product) => {
+                if (product.name.toLowerCase().includes(filterValue) || (product.description != null && product.description.toLowerCase().includes(filterValue))) {
+                    if (!products[product.product]) {
+                        products[product.product] = {
+                            name: product.name,
+                            description: product.description,
+                            prices: [product.price * product.quantity],
+                            quantities: [product.quantity],
+                            image: product.image
+                        };
+                    } else {
+                        products[product.product].prices.push(product.price * product.quantity);
+                        products[product.product].quantities.push(product.quantity);
+                    }
+                }
+            });
+        });
+
+        Object.values(products).forEach((prod) => {
+            prod.quantity = prod.quantities.reduce((a, b) => a + b, 0);
+            prod.average_price = prod.prices.reduce((a, b) => a + b, 0) / (prod.quantity);
+            delete prod.prices;
+            delete prod.quantities;
+        });
+
+        const uniqueProducts = Object.values(products);
+
+        const totalProducts = uniqueProducts.length;
+        const totalPages = Math.ceil(totalProducts / limitNumber);
+
+        const startIndex = (pageNumber - 1) * limitNumber;
+        const endIndex = startIndex + limitNumber;
+        const paginatedProducts = uniqueProducts.slice(startIndex, endIndex);
 
         return res.status(200).json({
             page: pageNumber,
             limit: limitNumber,
             totalPages: totalPages,
             totalProducts: totalProducts,
-            products: products.map(product => product.toJSON())
+            products: paginatedProducts
         });
     } catch (error) {
         return res.status(500).json({ message: error.message });
