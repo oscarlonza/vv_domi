@@ -38,8 +38,8 @@ export async function login(req, res) {
     try {
         const { email, password } = req.body;
 
-        if (!email) return res.status(400).json({ message: "Correo requerido" });
-        if (!password) return res.status(400).json({ message: "Contraseña requerida" });
+        if (!email) return res.status(400).json({ message: "email: Correo requerido" });
+        if (!password) return res.status(400).json({ message: "password: Contraseña requerida" });
 
         const userFound = await User.findOne({ email });
 
@@ -49,6 +49,7 @@ export async function login(req, res) {
         if (!passwordGood) return res.status(400).json({ message });
 
         const token = await createAccessToken({ id: userFound._id });
+        console.log('token > ', token);
         res.cookie('token', token);
 
         const user = {
