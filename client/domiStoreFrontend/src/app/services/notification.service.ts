@@ -9,7 +9,7 @@ export class NotificationImplService {
 
   successNotification(title: string, text: string) {
     Swal.fire({
-      position: 'top-end',
+      position: 'center',
       title,
       text,
       icon: 'success',
