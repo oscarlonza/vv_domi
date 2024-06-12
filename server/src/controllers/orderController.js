@@ -47,7 +47,7 @@ export const createOrder = async (req, res) => {
 
             const total = products.reduce((acc, product) => acc + product.price * product.quantity, 0);
 
-            const order = new Order({ user: req.user.id, address: req.user.address, products, total });
+            const order = new Order({ user: req.user.id, userName: req.user.name, address: req.user.address, products, total });
             orderSaved = await order.save({ session });
 
             await session.commitTransaction();
@@ -65,6 +65,24 @@ export const createOrder = async (req, res) => {
 
 export const getOrders = async (req, res) => {
     try {
+
+        const { role } = req.user;
+
+        const orders = await Order
+            .find(role === 'superadmin' ? {} : { user: req.user.id })
+            .sort({ createdAt: "desc" });
+
+        res.json(orders.map(order => order.toJSON()));
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+export const getOrdersBetweenDates = async (req, res) => {
+    try {
+
+        
+
 
         const { role } = req.user;
 
@@ -178,7 +196,6 @@ export const getPaginatedProductsPurchasedByUser = async (req, res) => {
     }
 };
 
-
 const validateAvailableStatus = (isAdmin, orderStatus, status) => {
     let availableStates = [];
 
@@ -234,4 +251,5 @@ const rejectOrCancelOrderTransaction = async (orderFound, status) => {
         await session.abortTransaction();
         throw error;
     }
-}
+};
+
