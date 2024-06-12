@@ -39,7 +39,6 @@ export default class ProductsComponent {
   getProducts() {
     this.productService.getProducts(this.dataParams).subscribe({
       next: (res: any) => {
-        console.log('res',res);
         this.dataSource = new MatTableDataSource(res.products);
         this.dataParams.total = res.products.length;
       },

@@ -15,8 +15,9 @@ export class AuthService {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }),
+      withCredentials: true
     };
-    return this.http.post(`http://localhost:8012/api/auth/login`, params);
+    return this.http.post(`http://localhost:8012/api/auth/login`, params,http_options);
   }
   getCookie(name: string): string | null {
     const value = `; ${document.cookie}`;
