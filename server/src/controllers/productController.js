@@ -56,13 +56,13 @@ export const createMultipleProducts = async (req, res) => {
 export const setProductsImageToDefault = async (req, res) => {
     try {
 
-        const products = await Product.find({ image: '/images/default.png' });
+        const products = await Product.find();
         const n = products.length;
         for (let index = 0; index < n; index++) {
             const product = products[index];
             product.image = addFileToRepository(req);
             await product.save();
-            console.log(`Set image of ${(index + 1)}/${n}`);
+            console.log(`Set image ${(index + 1)}/${n}`);
         }
 
         return res.status(201).json({ message: "OK" });
