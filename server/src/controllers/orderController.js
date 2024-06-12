@@ -127,14 +127,12 @@ export const getPaginatedProductsPurchasedPerUser = async (req, res) => {
         const products = orders.map(order => order.products).flat();
         const productsGrouped = Object.groupBy(products, ({ product }) => product);
         let productsAvg = Object.values(productsGrouped)
-            .map(arr => arr.reduce((productsAvg, { id, name, priceAvg, quantity }) => ({ id, priceAvg: productsAvg.price + price / 2, quantity: productsAvg.quantity + +quantity }), { priceAvg: 0 }))
-asdasdasd
+            .map(arr => arr.reduce((productsAvg, { id, name, priceAvg, quantity }) => ({ id, priceAvg: productsAvg.price + price / 2, quantity: productsAvg.quantity + +quantity }), { name:'', priceAvg: 0, quantity:0 }))
 
         const totalProducts = productsAvg.length;
         const totalPages = Math.ceil(totalProducts / limitNumber);
 
-        /*
-        
+        /*        
                 const regexValue = filter || '';
                 const findParameters = {
                     $or: [
