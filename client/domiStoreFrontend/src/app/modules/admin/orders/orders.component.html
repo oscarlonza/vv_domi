@@ -22,28 +22,31 @@
                     <th mat-header-cell *matHeaderCellDef>No. Pedido</th>
                     <td mat-cell *matCellDef="let element">
                         <span class="mobile-label mr-2">No. Pedido:</span>
-                        {{ element.order }}
+                        {{ element.id }}
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="client">
                     <th mat-header-cell *matHeaderCellDef>Cliente</th>
                     <td mat-cell *matCellDef="let element">
                         <span class="mobile-label mr-2">Cliente:</span>
-                        {{ element.client }}
+                        {{ element.userName }}
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="value">
                     <th mat-header-cell *matHeaderCellDef>Valor</th>
                     <td mat-cell *matCellDef="let element">
                         <span class="mobile-label mr-2">Valor:</span>
-                        {{ element.value }}
+                        {{ element.total }}
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="state">
                     <th mat-header-cell *matHeaderCellDef>Estado</th>
                     <td mat-cell *matCellDef="let element">
                         <span class="mobile-label mr-2">Estado:</span>
-                        {{ element.state }}
+                        <button mat-flat-button
+                        [ngClass]="element.status=='A' ? 'btn active' : element.status=='I' ? 'btn inactive': 'btn done'"
+                        type="button">{{element.status=='A' ? "Activo" : element.status=='I' ? "Inactivo" :
+                        "Realizado"}}</button>
                     </td>
                 </ng-container>
 
@@ -58,7 +61,7 @@
                         </button>
                         <button mat-icon-button (click)="openDialogProduct(element, 'delete')"
                             matTooltip="Eliminar producto">
-                            <mat-icon>delete</mat-icon>
+                            <mat-icon>cancel</mat-icon>
                         </button>
                     </td>
                 </ng-container>
@@ -67,9 +70,8 @@
                 <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
             </table>
         </div>
-        <mat-paginator [length]="dataParams.total" [pageSize]="dataParams.size"
-        [pageSizeOptions]="pageSizeOptions.length>0?pageSizeOptions:[10,20,50,100]" showFirstLastButtons
-        aria-label="Select page of periodic elements" class="card-footer" (page)="handlePage($event)">
-    </mat-paginator>
+        <mat-paginator [pageSizeOptions]="pageSizeOptions.length>0?pageSizeOptions:[10,20,50,100]" showFirstLastButtons
+            aria-label="Select page of periodic elements" class="card-footer">
+        </mat-paginator>
     </div>
 </div>

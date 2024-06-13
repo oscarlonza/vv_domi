@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { OrderService } from '../../../services/order.service';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { SharedModule } from '../../shared/shared.module';
@@ -6,6 +6,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
 import { DialogProduct } from '../products/products.component';
+import { NotificationImplService } from '../../../services/notification.service';
 type ActionType = 'new' | 'edit' | 'delete';
 
 @Component({
@@ -28,43 +29,43 @@ export default class OrdersComponent {
     size: 10,
     page: 1
   };
-
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  public notificationService = inject(NotificationImplService);
   constructor(
     private dialog: MatDialog,
     public orderService: OrderService
   ) { }
 
-  ngOnInit() {
-    this.getOrders();
+  async ngOnInit() {
+    await this.getOrders();
   }
-
-  getOrders() {
-    this.orderService.getOrders(this.dataParams).subscribe({
-      next: (res: any) => {
-        console.log('res', res);
-        this.dataSource = res;
-        this.dataParams.total = res.length;
-      },
-      error: (err: any) => {
-        this.dataSource = [];
-        this.dataParams.total = 0;
-        console.error('Error fetching data: ', err)
-      },
-      complete: () => console.log('Data fetching complete')
-    });
+  ngAfterViewInit() {
+    //console.log(window.document.documentElement.scrollHeight);
+    this.dataSource.paginator = this.paginator;
+  }
+  async getOrders() {
+    const result = await this.orderService.getOrders();
+    console.log('orders',result.data);
+    if (result.success) {
+      this.dataSource = new MatTableDataSource(result.data);
+      this.dataSource.paginator = this.paginator;
+      this.dataParams.total = result.data.length;
+    } else {
+      this.notificationService.errorNotification('Error en la solicitud');
+      this.dataSource = new MatTableDataSource([]);
+      this.dataSource.paginator = this.paginator;
+      this.dataParams.total = 0;
+    }
   }
 
   applyFilter(event: Event) {
-    const filtro = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filtro.trim().toLowerCase();
-  }
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-  handlePage(e: PageEvent) {
-    this.dataParams.size = e.pageSize;
-    this.dataParams.page = e.pageIndex + 1;
-    this.getOrders();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
-
   openDialogProduct(data: any, action: any) {
     const dialogConfig = new MatDialogConfig();
     data.action = action;

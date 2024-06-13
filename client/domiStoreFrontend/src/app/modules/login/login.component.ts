@@ -57,6 +57,7 @@ export default class LoginComponent {
     console.log('result', result);
     if (result.success) {
       environment.accessToken = await this.auth.getCookie('token')!;
+      sessionStorage.setItem('dataUser', JSON.stringify(result.data));
       console.log('token', environment.accessToken);
       this.goToDashboard();
     } else {

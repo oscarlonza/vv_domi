@@ -31,18 +31,18 @@ export class RequestService {
         console.log('parametros url: ', paramsUrl)
         console.log('url: ', _url)
 
-        const result: any =  await firstValueFrom(this._http.get(paramsUrl.length > 0 ? _url.includes("?") ? `${_url}&${paramsUrl.toString()}` : `${_url}?${paramsUrl.toString()}` : `${_url}`, { headers: _headers }))
+        const result: any =  await firstValueFrom(this._http.get(paramsUrl.length > 0 ? _url.includes("?") ? `${_url}&${paramsUrl.toString()}` : `${_url}?${paramsUrl.toString()}` : `${_url}`, { headers: _headers, withCredentials: true }))
         return new BasicResponse(result.success != undefined ? result.success : true, result.message != undefined ? result.message : "Request success", result.data != undefined ? result.data : result, !result.success ? result : undefined)
       } else {
         console.log(_url)
         return new BasicResponse(false, "No se puede hacer el request a esta url porque está vacía");
       }
     } catch (error) {
-      console.error(error)
+      console.error('dddeee0',error)
       return new BasicResponse(false, getErrorMessage(error), undefined, getBasicError(error))
     }
   }
-  async postLikeJSON(_url: string, _params: any, _headers: any = undefined,token:boolean = false, method: RequestMethod.POST | RequestMethod.PATCH | RequestMethod.PUT = RequestMethod.POST): Promise<BasicResponse> {
+  async postLikeJSON(_url: string, _params: any, _headers: any = undefined, method: RequestMethod.POST | RequestMethod.PATCH | RequestMethod.PUT = RequestMethod.POST): Promise<BasicResponse> {
     try {
       if (_url) {
         _url = _url.includes("http") ? _url : getDomain() + "/" + _url
@@ -53,13 +53,10 @@ export class RequestService {
           _headers = { "Content-Type": "application/json" }
           _headers = { "Accept": "application/json" }
         }
-        if(token) {
-          _headers["Authorization"] =`Bearer ${environment.accessToken}`
-        }
         _headers = new HttpHeaders(_headers)
         let result: any
         switch (method) {
-          case RequestMethod.POST: result = await  firstValueFrom(this._http.post(_url, _params, { headers: _headers })); break;
+          case RequestMethod.POST: result = await  firstValueFrom(this._http.post(_url, _params, { headers: _headers ,withCredentials: true})); break;
           case RequestMethod.PATCH: result = await firstValueFrom(this._http.patch(_url, _params, { headers: _headers })); break;
           case RequestMethod.PUT: result = await firstValueFrom(this._http.put(_url, _params, { headers: _headers })); break;
         }
@@ -72,7 +69,7 @@ export class RequestService {
       return new BasicResponse(false, getErrorMessage(error), undefined, getBasicError(error))
     }
   }
-  async putLikeJSON(_url: string, _params: any, _headers: any = undefined,token:boolean = false, method: RequestMethod.POST | RequestMethod.PATCH | RequestMethod.PUT = RequestMethod.PUT): Promise<BasicResponse> {
+  async putLikeJSON(_url: string, _params: any, _headers: any = undefined, method: RequestMethod.POST | RequestMethod.PATCH | RequestMethod.PUT = RequestMethod.PUT): Promise<BasicResponse> {
     try {
       if (_url) {
         _url = _url.includes("http") ? _url : getDomain() + "/" + _url
@@ -82,16 +79,13 @@ export class RequestService {
         } else {
           _headers = { "Content-Type": "application/json" }
           _headers = { "Accept": "application/json" }
-        }
-        if(token) {
-          _headers["Authorization"] =`Bearer ${environment.accessToken}`
         }
         _headers = new HttpHeaders(_headers)
         let result: any
         switch (method) {
           case RequestMethod.POST: result = await firstValueFrom(this._http.post(_url, _params, { headers: _headers })); break;
           case RequestMethod.PATCH: result = await firstValueFrom(this._http.patch(_url, _params, { headers: _headers })); break;
-          case RequestMethod.PUT: result = await firstValueFrom(this._http.put(_url, _params, { headers: _headers })); break;
+          case RequestMethod.PUT: result = await firstValueFrom(this._http.put(_url, _params, { headers: _headers,withCredentials: true })); break;
         }
         return new BasicResponse(result.success != undefined ? result.success : true, result.message != undefined ? result.message : "Request success", result.data != undefined ? result.data : result, !result.success ? result : undefined)
       } else {
@@ -102,16 +96,13 @@ export class RequestService {
       return new BasicResponse(false, getErrorMessage(error), undefined, getBasicError(error))
     }
   }
-  async delete(_url: string, _params: any = {}, _headers: any = undefined,token:boolean = false): Promise<BasicResponse> {
+  async delete(_url: string, _params: any = {}, _headers: any = undefined): Promise<BasicResponse> {
     try {
         if (_url) {
             _url = _url.includes("http") ? _url : getDomain() + "/" + _url
             let paramsUrl = "";
             if (!_headers) {
                 _headers = {}
-            }
-            if(token) {
-              _headers["Authorization"] =`Bearer ${environment.accessToken}`
             }
             _headers = new HttpHeaders(_headers)
             // Recorremos los parametros para convertirlos a parametros de url
@@ -122,7 +113,7 @@ export class RequestService {
                 }
             }
             const result: any = await firstValueFrom(this._http.delete(`${_url}?${paramsUrl.toString()}`, {
-                headers: _headers
+                headers: _headers,withCredentials: true
             }))
             return new BasicResponse(result.success != undefined ? result.success : true, result.message != undefined ? result.message : "Request success", result.data != undefined ? result.data : result, !result.success ? result : undefined)
         } else {

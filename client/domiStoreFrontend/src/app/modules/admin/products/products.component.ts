@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductService } from '../../../services/product.service';
 import { NotificationImplService } from '../../../services/notification.service';
 import { environment } from '../../../../environments/environment';
+import { getErrorMessage, hideSpinner, showSpinner } from '../../../../app/services/functions.service';
 type ActionType = 'new' | 'edit' | 'delete';
 
 @Component({
@@ -29,7 +30,8 @@ export default class ProductsComponent {
   dataParams: any = {
     total: 0,
     limit: 10,
-    page: 1
+    page: 1,
+    filter: ''
   };
   public notificationService = inject(NotificationImplService);
   constructor(private dialog: MatDialog,
@@ -42,7 +44,7 @@ export default class ProductsComponent {
   async getProducts() {
     const result = await this.productService.getProducts(this.dataParams);
     console.log(environment.accessToken);
-    console.log('result', result);
+    //console.log('result', result);
     if (result.success) {
       this.dataSource = new MatTableDataSource(result.data.products);
       this.dataParams.total = result.data.products.length;
@@ -54,7 +56,9 @@ export default class ProductsComponent {
   }
   applyFilter(event: Event) {
     const filtro = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filtro.trim().toLowerCase();
+    this.dataParams.filter = filtro;
+    this.getProducts();
+    //this.dataSource.filter = filtro.trim().toLowerCase();
   }
   handlePage(e: PageEvent) {
     this.dataParams.size = e.pageSize;
@@ -73,7 +77,7 @@ export default class ProductsComponent {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (ProductsComponent.switch == 1) {
-        this.ngOnInit();
+        this.getProducts();
       }
       ProductsComponent.switch = 0;
     });
@@ -102,7 +106,9 @@ export class DialogProduct implements OnInit {
   form: FormGroup
   teamData: any = []
   previewUrl: any = null;
+  public notificationService = inject(NotificationImplService);
   constructor(
+    public productService: ProductService,
     public dialogRef: MatDialogRef<DialogProduct>,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
@@ -140,7 +146,68 @@ export class DialogProduct implements OnInit {
   dialogClose() {
     this.dialogRef.close();
   }
-  create() {
+  async create() {
+    showSpinner();
+    //console.log('imagen',this.previewUrl);
+    if (this.action == 'new' || this.action == 'edit') {
+      /* if (this.previewUrl){
+        this.form.value.image=this.previewUrl;
+      } */
+      if (this.form.valid) {
+        if (this.action == 'new') {
+          try {
+            const result = await this.productService.createProduct(this.form.value)
+            if (result.success) {
+              this.notificationService.successNotification('Creación de productos', 'Producto creado con éxito.');
+              await ProductsComponent.changeValueDialog(1);
+              this.dialogClose();
+            } else {
+              this.notificationService.errorNotification('Error en la creación de producto.');
+            }
+            hideSpinner()
+          } catch (error) {
+            hideSpinner()
+            const message = getErrorMessage(error)
+            this.notificationService.errorNotification(message);
+          }
+        } else {
+          try {
+            const result = await this.productService.updateProduct(this.form.value, this.data.id)
+            if (result.success) {
+              this.notificationService.successNotification('Actualización de productos', 'Producto actualizado con éxito.');
+              await ProductsComponent.changeValueDialog(1);
+              this.dialogClose();
+            } else {
+              this.notificationService.errorNotification('Error en la actualización de producto.');
+            }
+            hideSpinner()
+          } catch (error) {
+            hideSpinner()
+            const message = getErrorMessage(error)
+            this.notificationService.errorNotification(message);
+          }
+        }
+      } else {
+        hideSpinner()
+        this.notificationService.errorNotification('Todos los campos son obligatorios.');
+      }
+    } else {
+      try {
+        const result = await this.productService.deleteProduct(this.data.id)
+        if (result.success) {
+          this.notificationService.successNotification('Eliminación de productos', result.message);
+          await ProductsComponent.changeValueDialog(1);
+          this.dialogClose();
+        } else {
+          this.notificationService.errorNotification('Error en la eliminación de producto.');
+        }
+        hideSpinner()
+      } catch (error) {
+        hideSpinner()
+        const message = getErrorMessage(error)
+        this.notificationService.errorNotification(message);
+      }
+    }
 
   }
   onFileSelected(event: Event): void {
