@@ -19,7 +19,7 @@ export default class HomeComponent {
 
   dataParams: any = {
     total: 0,
-    size: 10,
+    size: 20,
     page: 1
   };
   public notificationService = inject(NotificationImplService);
