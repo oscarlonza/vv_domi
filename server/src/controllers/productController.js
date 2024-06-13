@@ -2,57 +2,9 @@ import { addFileToRepository } from '../libs/fileManager.js';
 import { Product } from '../models/product.js';
 import { Comment } from '../models/comment.js';
 
-import faker from 'faker';
-
 /*
 Controlador para la entidad Product.
 */
-
-// Crear 200 productos usando Faker
-export const createMultipleProducts = async (req, res) => {
-    try {
-        const products = [];
-        const { totalProducts } = req.body;
-        const total = parseInt(totalProducts) || 200;
-
-        for (let i = 0; i < total; i++) {
-            const name = faker.commerce.productName();
-            const price = faker.commerce.price();
-            const description = faker.lorem.sentence();
-            const quantity = faker.datatype.number({ min: 0, max: 50 });
-            //TODO Cambiar ruta por la imagen del frontend
-            const image = addFileToRepository(req);
-            const newProduct = new Product({ name, price, description, quantity, image });
-            await newProduct.save();
-
-            const nComments = faker.datatype.number({ min: 0, max: 50 });
-            for (let j = 0; j < nComments; j++) {
-                const comment = faker.lorem.sentence();
-                const rating = faker.datatype.number({ min: 1, max: 5 });
-                const newComment = new Comment({
-                    comment, rating,
-                    user: faker.internet.userName(),
-                    product: newProduct._id
-                });
-                await newComment.save();
-                newProduct.comments.push(newComment.rating);
-
-                console.log(`Comentario ${j + 1}/${nComments} creado correctamente`);
-            }
-
-            const productSaved = await newProduct.save();
-
-            products.push(productSaved.toJSON());
-
-            console.log(`Producto ${i + 1}/${total} creado correctamente`);
-        }
-
-        return res.status(201).json(products);
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-};
-
 export const setProductsImageToDefault = async (req, res) => {
     try {
 

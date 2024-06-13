@@ -57,12 +57,15 @@ const orderSchema = new mongoose.Schema({
     receivedAt: {
         type: Date,
     },
-
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 }, { timestamps: true });
 
 orderSchema.methods.toJSON = function () {
     const { __v, createdAt, updatedAt, _id: id, products, ...data } = this.toObject();
-    return { id, products: products.map(({ _id, ...item }) => ({ ...item })), ...data };
+    return { id, createdAt, products: products.map(({ _id, ...item }) => ({ ...item })), ...data };
 };
 
 orderSchema.methods.toResumeJSON = function () {

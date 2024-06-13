@@ -3,61 +3,76 @@ import { Order } from '../models/order.js';
 import { Product } from '../models/product.js';
 import mongoose from "mongoose";
 
+
+const validateProduct = async (i, product, session) => {
+    if (!product.id || !product.price)
+        throw new Error(`products[${i}]: el producto debe tener id, quantity y price`);
+    if (!product.quantity || product.quantity < 1)
+        throw new Error(`products[${i}].quantity: La cantidad no puede ser menor a 1`);
+    if (!product.price || product.price < 0)
+        throw new Error(`products[${i}].price: El precio no puede ser menor a 0`);
+
+    const productFound = await Product.findById(product.id).session(session);
+
+    if (!productFound)
+        throw new Error(`products[${i}]: Producto no encontrado`);
+    if (product.quantity > productFound.quantity)
+        throw new Error(`products[${i}].quantity: Producto sin stock suficiente`);
+    if (product.price !== productFound.price)
+        throw new Error(`products[${i}].price: Precio del producto incorrecto`);
+
+    return productFound;
+};
+
+export const createOrderTransaction = async (req, products) => {
+
+    if (!products || products.length === 0)
+        throw new Error('La orden debe tener productos');
+
+    const n = products.length;
+    let orderSaved = {};
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+
+        for (let i = 0; i < n; i++) {
+            const product = products[i];
+
+            const productFound = await validateProduct(i, product, session);
+
+            product.product = productFound._id;
+            product.name = productFound.name;
+            product.image = productFound.image;
+            product.description = productFound.description;
+            productFound.quantity -= product.quantity;
+            await productFound.save({ session });
+        }
+
+        const total = products.reduce((acc, product) => acc + product.price * product.quantity, 0);
+
+        const order = new Order({ user: req.user.id, userName: req.user.name, address: req.user.address, products, total });
+        orderSaved = await order.save({ session });
+        orderSaved = orderSaved.toJSON();
+
+        await session.commitTransaction();
+        await session.endSession();
+    } catch (error) {
+        await session.abortTransaction();
+        throw error;
+    }
+
+    return orderSaved;
+};
+
 export const createOrder = async (req, res) => {
     try {
         const { products } = req.body;
 
-        if (!products || products.length === 0)
-            throw new Error('La orden debe tener productos');
+        const orderSaved = await createOrderTransaction(req, products);
 
-        const n = products.length;
-        let orderSaved = {};
-
-        const session = await mongoose.startSession();
-        session.startTransaction();
-
-        try {
-
-            for (let i = 0; i < n; i++) {
-                const product = products[i];
-
-                if (!product.id || !product.price)
-                    throw new Error(`products[${i}]: el producto debe tener id, quantity y price`);
-                if (!product.quantity || product.quantity < 1)
-                    throw new Error(`products[${i}].quantity: La cantidad no puede ser menor a 1`);
-                if (!product.price || product.price < 0)
-                    throw new Error(`products[${i}].price: El precio no puede ser menor a 0`);
-
-                const productFound = await Product.findById(product.id).session(session);
-
-                if (!productFound)
-                    throw new Error(`products[${i}]: Producto no encontrado`);
-                if (product.quantity > productFound.quantity)
-                    throw new Error(`products[${i}].quantity: Producto sin stock suficiente`);
-                if (product.price !== productFound.price)
-                    throw new Error(`products[${i}].price: Precio del producto incorrecto`);
-
-                product.product = productFound._id;
-                product.name = productFound.name;
-                product.image = productFound.image;
-                product.description = productFound.description,
-                    productFound.quantity -= product.quantity;
-                await productFound.save({ session });
-            }
-
-            const total = products.reduce((acc, product) => acc + product.price * product.quantity, 0);
-
-            const order = new Order({ user: req.user.id, userName: req.user.name, address: req.user.address, products, total });
-            orderSaved = await order.save({ session });
-
-            await session.commitTransaction();
-            await session.endSession();
-        } catch (error) {
-            await session.abortTransaction();
-            throw error;
-        }
-
-        return res.status(201).json(orderSaved.toJSON());
+        return res.status(201).json(orderSaved);
     } catch (error) {
         return res.status(400).json({ message: error.message.replace('Order validation failed: ', '') });
     }
@@ -83,15 +98,15 @@ export const getOrdersBetweenDates = async (req, res) => {
 
         const { from, to } = req.query;
 
-        if(!from || !to)
+        if (!from || !to)
             throw new Error('from: Fecha desde requerida, to: Fecha hasta requirida');
-        
+
         let fromDate = new Date(`${from}T00:00:00.000Z`);
         let toDate = new Date(`${to}T23:59:59.000Z`);
 
         const orders = await Order
             .find({
-                createdAt : {
+                createdAt: {
                     $gte: fromDate,
                     $lte: toDate
                 }
@@ -100,7 +115,57 @@ export const getOrdersBetweenDates = async (req, res) => {
 
         res.json(orders.map(order => order.toResumeJSON()));
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getTopTenProducts = async (req, res) => {
+    try {
+
+        const { from, to } = req.query;
+
+        if (!from || !to)
+            throw new Error('from: Fecha desde requerida, to: Fecha hasta requirida');
+
+        let fromDate = new Date(`${from}T00:00:00.000Z`);
+        let toDate = new Date(`${to}T23:59:59.000Z`);
+
+        const orders = await Order
+            .find({
+                createdAt: {
+                    $gte: fromDate,
+                    $lte: toDate
+                }
+            })
+            .sort({ createdAt: "desc" });
+
+        const products = {};
+
+        orders.forEach((order) => {
+            order.products.forEach((product) => {
+                if (!products[product.product]) {
+                    products[product.product] = {
+                        name: product.name,
+                        description: product.description,
+                        quantities: [product.quantity],
+                        image: product.image
+                    };
+                } else {
+                    products[product.product].quantities.push(product.quantity);
+                }
+            });
+        });
+
+        Object.values(products).forEach((prod) => {
+            prod.quantity = prod.quantities.reduce((a, b) => a + b, 0);
+            delete prod.quantities;
+        });
+
+        const uniqueProducts = Object.values(products).sort((a, b) => b.quantity - a.quantity).slice(0, 10);
+
+        res.json(orders.map(uniqueProducts));
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -236,15 +301,14 @@ const validateAvailableStatus = (isAdmin, orderStatus, status) => {
         throw new Error('status: Estado no disponible');
 };
 
-const rejectOrCancelOrderTransaction = async (orderFound, status) => {
+export const rejectOrCancelOrderTransaction = async (orderFound, status) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
 
         const { products } = orderFound;
 
-        for (let i = 0; i < products.length; i++) {
-            const product = products[i];
+        for (const product of products) {
             const productFound = await Product.findById(product.product);
             productFound.quantity += product.quantity;
             await productFound.save({ session });
