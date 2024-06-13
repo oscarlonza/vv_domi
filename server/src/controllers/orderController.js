@@ -161,9 +161,11 @@ export const getTopTenProducts = async (req, res) => {
             delete prod.quantities;
         });
 
-        const uniqueProducts = Object.values(products).sort((a, b) => b.quantity - a.quantity).slice(0, 10);
+        const uniqueProducts = Object.values(products)
+            .sort((a, b) => b.quantity - a.quantity)
+            .slice(0, 10);
 
-        res.json(orders.map(uniqueProducts));
+        res.json(uniqueProducts);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
