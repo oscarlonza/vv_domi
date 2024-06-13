@@ -1,9 +1,14 @@
-import { Component, ElementRef, HostListener, Inject, inject, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Inject, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogContent, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ProductService } from '../../services/product.service';
 import { SharedModule } from '../shared/shared.module';
 import { NotificationImplService } from '../../services/notification.service';
 import { CommonModule, DOCUMENT } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableDataSource } from '@angular/material/table';
+import { Dialog } from '@angular/cdk/dialog';
+import { OrderService } from '../../services/order.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +18,8 @@ import { CommonModule, DOCUMENT } from '@angular/common';
   styleUrl: './home.component.scss',
 })
 export default class HomeComponent {
+
+  private SESSION_USER_KEY = 'dataUser';
 
   loading = false;
   cart: any = [];
@@ -28,23 +35,32 @@ export default class HomeComponent {
   private defaultValue = 30;
   private limitSignal = signal<number>(this.defaultValue);
 
-  localStorage: any;
+  private localStorage: any;
+  private sessionStorage: any;
+
+  authUser: any = null;
 
   public notificationService = inject(NotificationImplService);
   constructor(private dialog: MatDialog,
     public productService: ProductService, private el: ElementRef, @Inject(DOCUMENT) private document: Document
   ) {
     this.localStorage = document.defaultView?.localStorage;
+    this.sessionStorage = document.defaultView?.sessionStorage;
   }
 
   async ngOnInit() {
     this.loading = true;
     this.getProducts().finally(() => this.loading = false);
 
-    const infoCart = this.localStorage?.getItem('cart');
+    //Loading authentication user data
+    const data = this.sessionStorage?.getItem(this.SESSION_USER_KEY);
+    this.authUser = data ? JSON.parse(data) : null;
 
+    //Loadind card information
+    const infoCart = this.localStorage?.getItem('cart');
     this.cart = infoCart ? JSON.parse(infoCart) : [];
     this.updateCartTotal();
+
   }
 
   async getProducts() {
@@ -67,8 +83,17 @@ export default class HomeComponent {
     }
   }
 
-  openDialog(data: any): void {
-    console.log('data', data);
+  openDialog(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = this.cart;
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+
+    const dialogRef = this.dialog.open(DialogCart, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
   goToProductDetail(id: any): void {
@@ -172,4 +197,72 @@ export default class HomeComponent {
     }
   }
 
+}
+
+
+@Component({
+  selector: 'DialogCart',
+  templateUrl: './cart.component.html',
+  styleUrls: ['./home.component.scss', './cart.component.scss'],
+  standalone: true,
+  imports: [SharedModule]
+})
+export class DialogCart implements OnInit {
+  displayedColumns: string[] = ['name', 'quantity', 'price', 'total'];
+  footerColumns: string[] = ['total'];
+  class: string = ""
+  title: string = "Listado de pedidos"
+
+  products: any = [];
+  totalPrice: number = 0;
+  public notificationService = inject(NotificationImplService);
+  constructor(
+    public oriderService: OrderService,
+    public dialogRef: MatDialogRef<DialogCart>,
+    private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+  ) {
+  }
+  ngOnInit() {
+
+    const products = this.data;
+    products.forEach((product: any) => {
+      product.total = product.quantity * product.price;
+      this.totalPrice += product.total;
+    });
+
+    this.products = new MatTableDataSource(products);
+
+  }
+  dialogClose() {
+    this.dialogRef.close('cancel');
+  }
+  async create() {
+    try {
+      //const result = await this.productService.deleteProduct(this.data.id)
+      //if (result.success) {
+      //  this.notificationService.successNotification('Eliminación de productos', result.message);
+      //  await ProductsComponent.changeValueDialog(1);
+      //  this.dialogClose('OK');
+      //} else {
+      //  this.notificationService.errorNotification('Error en la eliminación de producto.');
+      //}
+      //hideSpinner()
+
+      this.notificationService.successNotification("TITLE", "OK");
+    } catch (error) {
+      //hideSpinner()
+      //const message = getErrorMessage(error)
+      this.notificationService.errorNotification("Fail");
+    }
+
+  }
+  openSnackBar(message: string, action: string, type: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: type
+    });
+  }
 }
