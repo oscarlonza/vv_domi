@@ -30,7 +30,7 @@ export const routes: Routes = [
         children: [
             {
                 path: 'home',
-                loadComponent: () => import('./modules/home/home.component').then(m => m.default)
+                loadComponent: () => import('./modules/home/home.component')
             }
         ]
     },

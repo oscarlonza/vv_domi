@@ -1,48 +1,99 @@
-<section class="main-container">
-    <h2>Productos destacados</h2>
-    <div class="courses-container">
-        <div class="single-course" *ngFor="let item of products">
-            <div class="course-image">
-                <img src="{{ item.image }}" alt="" loading="lazy">
-                <span class="category">{{ item.category? item.category : 'Tecno' }}</span>
-                <div class="cribbon"></div>
-                <div class="course-info">
-                    <span (click)="openDialog(item)" class="material-icons">info</span>
-                </div>
-            </div>
-            <div class="course-title">
-                <h3>
-                    <a (click)="goToProductDetail(item.id)">{{ item.name }}</a>
-                </h3>
-                <div class="profesor-info">
-                    <p>Comentarios: <span>{{ item.comments }}</span></p>
-                </div>
-                <div class="ranking">
-                    <star-rating [starType]="'svg'"
-                    (starClickChange)="addStar($event.rating, item)"
-                    [disabled]="!item.voted"
-                    [rating]="4"
-                    [staticColor]="'ok'" [step]="0.5" [showHalfStars]="true"></star-rating>
-                    <p>{{4.5}} {{4.5<2 ? 'estrella':'estrellas'}} | {{5}} votos</p>
-                </div>
-            </div>
-            <div class="course-detail">
-                <div class="price">
-                    <h3>{{ item.moneda }} {{ item.price | currency }}</h3>
-                    <div class="price-info">
-                        <span
-                            class="material-icons"
-                            style="max-width: 24px;"
-                            matTooltip={{item.mensajeMoneda}}>
-                            paid
-                        </span>
-                    </div>
-                </div>
-                
-                <button mat-raised-button (click)="goToBuy(item)">
-                    <mat-icon>payment</mat-icon> Comprar
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="#!">Domi Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+
+            <div class="d-flex">
+                <a href="/login" class="btn btn-brand me-2 d-flex items-align-center">
+                    <mat-icon class="me-1">person</mat-icon>
+                    Iniciar sesión
+                </a>
+                <button class="btn btn-outline-brand d-flex items-align-center" type="submit">
+                    <mat-icon>shopping_cart_checkout</mat-icon>
+                    Cart
+                    <span class="badge bg-brand text-white ms-1 mt-1 rounded-pill">{{cartTotal}}</span>
                 </button>
             </div>
         </div>
     </div>
-</section>
+</nav>
+<div class="store-container">
+    <!-- Header-->
+    <header class="bg-brand py-5 m-0">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Domi Store</h1>
+                <p class="lead fw-normal text-white-50 mb-0">Compra todo lo que quieras y necesites</p>
+            </div>
+        </div>
+    </header>
+    <!-- Section-->
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <div class="d-flex flex-wrap justify-content-center">
+                <div class="m-2" *ngFor="let item of products">
+                    <div class="card h-100 card-product">
+                        <!-- Product image-->
+                        <img class="card-img-top" src="{{ item.image }}" alt="..." />
+
+                        <!-- Product details-->
+                        <div class="card-body d-flex flex-column">
+
+                            <div class="d-flex items-align-center">
+                                <div class="text-left mb-2">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{item.name}}</h5>
+                                    <!-- Product price-->
+                                    <p class="">$ {{item.price}}</p>
+                                </div>
+
+                                <div class="text-center m-1 d-flex flex-column align-self-center">
+                                    <div class="btn-group mb-1" role="group" aria-label="Basic example">
+                                        <button type="button" class="btn btn-brand"
+                                            (click)="addRestProduct(item, -1)">-</button>
+                                        <input type="number" value="{{item.quantity_purchased}}"
+                                            ng-model="item.quantity_purchased" [max]="item.quantity" [min]="1"
+                                            class="text-center fw-bolder without-buttons" />
+                                        <button type="button" class="btn btn-brand"
+                                            (click)="addRestProduct(item, 1)">+</button>
+                                    </div>
+                                    <button class="btn btn-outline-brand mt-auto"
+                                        (click)="onAddProduct(item)">Agregar</button>
+                                </div>
+                            </div>
+                            <p class="">$ {{item.description}}</p>
+                        </div>
+
+                        <!-- Product actions-->
+                        <div class="card-footer pt-0 border-top-0 bg-transparent">
+                            <div class="rating">
+                                <star-rating [starType]="'svg'" (starClickChange)="addStar($event.rating, item)"
+                                    [disabled]="!item.voted" [rating]="getRatingValue(item)" [staticColor]="'ok'"
+                                    [step]="0.5" [showHalfStars]="true"></star-rating>
+                                <div class="d-flex align-content-center">
+                                    <mat-icon>summarize</mat-icon><span
+                                        class="align-content-center">{{item.comments}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 text-center">
+            <div *ngIf="loading" class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </section>
+    <!-- Footer-->
+    <footer class="py-5 bg-brand">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Domi Store 2023</p>
+        </div>
+    </footer>
+</div>
