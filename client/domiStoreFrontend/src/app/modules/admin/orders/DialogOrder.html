@@ -1,0 +1,50 @@
+<form class="card mt-3" [formGroup]="form">
+    <div *ngIf="action=='change';else other_content">
+        <div class="card-header d-flex align-items-center justify-content-between flex-wrap" style="gap: 1rem;">
+            <div class="m-1">
+                <h2 class="m-0 mr-2">
+                    {{title}}
+                </h2>
+                <!--  <p class="title-description">
+                    Digite todos los campos
+                </p> -->
+            </div>
+        </div>
+        <div class="card-body row justify-content-center">
+            <div class="col-12 col-md-6">
+                <mat-label><span style="font-weight: bold;">No. Pedido:</span> {{data.id}}</mat-label>
+
+            </div>
+            <mat-form-field appearance="outline" class="col-12 col-md-6">
+                <mat-label>Estado</mat-label>
+                <mat-select formControlName="status" required>
+                    <mat-option *ngFor="let item of status" [value]="item.english">
+                        {{item.spanish}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <ng-template #other_content>
+        <div class="card-header d-flex align-items-center justify-content-between flex-wrap" style="gap: 1rem;">
+            <div class="m-1 d-flex align-items-center flex-column flex-sm-row gap-2">
+
+                <h2 class="m-0 mr-2">
+                    {{title}}
+                </h2>
+                <small class="title-description">
+                    Desea {{action=='accept'? 'aceptar' : 'rechazar'}} el pedido {{data.id}} <span class="span_style">{{data.name}}</span>?
+                </small>
+
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="card-footer d-flex align-items-center justify-content-end gap-2">
+        <button style="margin-top: 20px;" mat-flat-button type="button" (click)="dialogClose()">Cancelar</button>
+        <button style="margin-top: 20px;" mat-flat-button color="primary" type="button"
+            (click)="create()">{{actions[action]}}</button>
+
+    </div>
+</form>

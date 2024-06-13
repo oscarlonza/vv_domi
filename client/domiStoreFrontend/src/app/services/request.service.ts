@@ -38,7 +38,7 @@ export class RequestService {
         return new BasicResponse(false, "No se puede hacer el request a esta url porque está vacía");
       }
     } catch (error) {
-      console.error('dddeee0',error)
+      //console.error(error)
       return new BasicResponse(false, getErrorMessage(error), undefined, getBasicError(error))
     }
   }

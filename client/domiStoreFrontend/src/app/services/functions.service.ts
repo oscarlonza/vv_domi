@@ -77,3 +77,19 @@ export function hideSpinner() {
     .getElementById('coky-spinner-container')
     ?.setAttribute('hidden', 'true');
 }
+export const orderStatusColors: { [key: string]: string } = {
+  created: '1px solid #2196F3', // Azul
+  preparing: '1px solid #FFC107', // Amarillo
+  delivered: '1px solid #4CAF50', // Verde
+  received: '1px solid #8BC34A', // Verde Claro
+  canceled: '1px solid #F44336', // Rojo
+  rejected: '1px solid #9E9E9E'  // Gris
+};
+export const orderStatusText: { [key: string]: string } = {
+  created: 'Creado', // Azul
+  preparing: 'Preparando', // Amarillo
+  delivered: 'Enviado', // Verde
+  received: 'Recibido', // Verde Claro
+  canceled: 'Cancelado', // Rojo
+  rejected: 'Rechazado'  // Gris
+};

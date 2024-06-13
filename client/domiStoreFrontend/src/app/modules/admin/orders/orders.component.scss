@@ -119,15 +119,8 @@
 .error {
     background-color: #e53327;
 }
-.active {
+.btn_status {
     border-radius: 20px !important;
-    border: 1px solid #ff991f;
-    font-family: "Lato";
     color: #404b5a;
-}
-.inactive {
-    border-radius: 20px !important;
-    border: 1px solid #e53327;
-    font-family: "Lato";
-    color: #404b5a;
+    width: -webkit-fill-available;
 }
