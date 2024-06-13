@@ -1,11 +1,17 @@
 
 import mongoose from "mongoose";
 
+export const OrderStatusEnum = ['created', 'preparing', 'delivered', 'received', 'canceled', 'rejected'];
+
 const orderSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: [true, 'Usuario requerido'],
+    },
+    userName: {
+        type: String,
+        required: [true, 'Nombre del usuario requido'],
     },
     address: {
         type: String,
@@ -20,6 +26,9 @@ const orderSchema = new mongoose.Schema({
         name: {
             type: String,
             required: [true, 'Nombre requerido'],
+        },
+        description: {
+            type: String
         },
         quantity: {
             type: Number,
@@ -44,18 +53,26 @@ const orderSchema = new mongoose.Schema({
     status: {
         type: String,
         required: [true, 'Estado requerido'],
-        enum: ['created', 'preparing', 'delivered', 'received', 'canceled', 'rejected'],
+        enum: OrderStatusEnum,
         default: 'created',
     },
     receivedAt: {
         type: Date,
     },
-
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 }, { timestamps: true });
 
 orderSchema.methods.toJSON = function () {
     const { __v, createdAt, updatedAt, _id: id, products, ...data } = this.toObject();
-    return { id, products: products.map(({ _id, ...item }) => ({ ...item })), ...data };
+    return { id, createdAt, products: products.map(({ _id, ...item }) => ({ ...item })), ...data };
+};
+
+orderSchema.methods.toResumeJSON = function () {
+    const { __v, createdAt, updatedAt, _id: id, products, ...data } = this.toObject();
+    return { id, createdAt, ...data };
 };
 
 export const Order = mongoose.model('Order', orderSchema);
