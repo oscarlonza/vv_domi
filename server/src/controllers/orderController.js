@@ -1,5 +1,5 @@
 
-import { Order } from '../models/order.js';
+import { Order, OrderStatusEnum } from '../models/order.js';
 import { Product } from '../models/product.js';
 import mongoose from "mongoose";
 
@@ -75,6 +75,44 @@ export const createOrder = async (req, res) => {
         return res.status(201).json(orderSaved);
     } catch (error) {
         return res.status(400).json({ message: error.message.replace('Order validation failed: ', '') });
+    }
+};
+
+export const updateOrder = async (req, res) => {
+
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const { id: userId, role } = req.user;
+
+        if (!status)
+            throw new Error('status: Estado es requiredo');
+
+        const filter = { _id: id };
+        const isAdmin = role === 'superadmin';
+        if (!isAdmin) filter.user = userId;
+
+        const orderFound = await Order.findOne(filter);
+
+        if (!orderFound)
+            throw new Error('Orden no encontrada');
+
+        const { status: orderStatus } = orderFound;
+
+        validateAvailableStatus(isAdmin, orderStatus, status);
+
+        if (['canceled', 'rejected'].includes(status)) {
+
+            await rejectOrCancelOrderTransaction(orderFound, status);
+        }
+        else {
+            orderFound.status = status;
+            await orderFound.save();
+        }
+
+        return res.status(200).json({ message: 'Estado actualizado satisfactoriamente' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -171,39 +209,33 @@ export const getTopTenProducts = async (req, res) => {
     }
 };
 
-export const updateOrder = async (req, res) => {
-
+export const getOrdersPerStatus = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { status } = req.body;
-        const { id: userId, role } = req.user;
+        const { from, to } = req.query;
 
-        if (!status)
-            throw new Error('status: Estado es requiredo');
+        if (!from || !to)
+            throw new Error('from: Fecha desde requerida, to: Fecha hasta requirida');
 
-        const filter = { _id: id };
-        const isAdmin = role === 'superadmin';
-        if (!isAdmin) filter.user = userId;
+        let fromDate = new Date(`${from}T00:00:00.000Z`);
+        let toDate = new Date(`${to}T23:59:59.000Z`);
 
-        const orderFound = await Order.findOne(filter);
+        const orders = await Order
+            .find({
+                createdAt: {
+                    $gte: fromDate,
+                    $lte: toDate
+                }
+            });
+        
+        const enableStatus = OrderStatusEnum.filter(status => status !== 'canceled');
 
-        if (!orderFound)
-            throw new Error('Orden no encontrada');
+        const orderPerStatus = {};
 
-        const { status: orderStatus } = orderFound;
+        enableStatus.forEach((status) => {
+            orderPerStatus[status] = orders.filter(order => order.status === status).length;
+        });
 
-        validateAvailableStatus(isAdmin, orderStatus, status);
-
-        if (['canceled', 'rejected'].includes(status)) {
-
-            await rejectOrCancelOrderTransaction(orderFound, status);
-        }
-        else {
-            orderFound.status = status;
-            await orderFound.save();
-        }
-
-        return res.status(200).json({ message: 'Estado actualizado satisfactoriamente' });
+        return res.status(200).json(orderPerStatus);
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

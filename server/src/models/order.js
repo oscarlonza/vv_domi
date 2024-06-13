@@ -1,6 +1,8 @@
 
 import mongoose from "mongoose";
 
+export const OrderStatusEnum = ['created', 'preparing', 'delivered', 'received', 'canceled', 'rejected'];
+
 const orderSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -51,7 +53,7 @@ const orderSchema = new mongoose.Schema({
     status: {
         type: String,
         required: [true, 'Estado requerido'],
-        enum: ['created', 'preparing', 'delivered', 'received', 'canceled', 'rejected'],
+        enum: OrderStatusEnum,
         default: 'created',
     },
     receivedAt: {

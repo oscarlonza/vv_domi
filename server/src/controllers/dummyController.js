@@ -145,3 +145,20 @@ export const alterCreateAtOrder = async (req, res) => {
     }
 
 }
+
+export const alterStatusOrder = async (req, res) => {
+    try {
+        const orders = await Order.find();
+
+        for (const order of orders) {
+            order.status = faker.helpers.arrayElement(['created', 'preparing', 'delivered', 'received', 'canceled', 'rejected']);
+            await order.save();
+            console.log(`Orden ${order._id} actualizada correctamente`);
+        }
+
+        return res.status(200).json({ message: 'Ordenes actualizadas' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+
+}

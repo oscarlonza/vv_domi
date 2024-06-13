@@ -3,7 +3,7 @@ Las rutas para consumir el controlador de ordenes
 */
 
 import { Router } from "express";
-import { createOrder, getOrders, updateOrder, getPaginatedProductsPurchasedByUser, getOrdersBetweenDates, getTopTenProducts } from "../controllers/orderController.js";
+import { createOrder, getOrders, updateOrder, getPaginatedProductsPurchasedByUser, getOrdersBetweenDates, getTopTenProducts, getOrdersPerStatus } from "../controllers/orderController.js";
 import validateToken from "../middlewares/validateToken.js";
 import { validateUserExits, validateUserIsVerified, validateUserIsAdmin } from "../middlewares/validateUser.js";
 
@@ -23,6 +23,6 @@ orderRouter.get('/resume', validateToken, validateUserExits, validateUserIsVerif
 
 orderRouter.get('/topten', validateToken, validateUserExits, validateUserIsVerified, validateUserIsAdmin, getTopTenProducts);
 
-
+orderRouter.get('/totalperstatus', validateToken, validateUserExits, validateUserIsVerified, validateUserIsAdmin, getOrdersPerStatus);
 
 export default orderRouter;
