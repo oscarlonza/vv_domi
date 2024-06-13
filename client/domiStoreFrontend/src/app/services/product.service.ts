@@ -14,4 +14,22 @@ export class ProductService {
     const result= await this.requestsService.get(`${environment.apiUrl}/products/paginated`,params);
     return result;
   }
+  async createProduct(params: any): Promise<BasicResponse> {
+    const result = await this.requestsService.postLikeJSON(
+      `${environment.apiUrl}/products`, params
+    );
+    return result
+  }
+  async updateProduct(params: any,productId:string): Promise<BasicResponse> {
+    const result = await this.requestsService.putLikeJSON(
+      `${environment.apiUrl}/products/${productId}`, params
+    );
+    return result
+  }
+  async deleteProduct(productId:string): Promise<BasicResponse> {
+    const result = await this.requestsService.delete(
+      `${environment.apiUrl}/products/${productId}`
+    );
+    return result
+  }
 }

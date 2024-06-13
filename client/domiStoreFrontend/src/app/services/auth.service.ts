@@ -11,7 +11,7 @@ export class AuthService {
 
   constructor(private requestsService: RequestService) { }
   async login(params: any): Promise<BasicResponse> {
-    const result= await this.requestsService.postLikeJSON(`${environment.apiUrl}/auth/login`, params,{},true);
+    const result= await this.requestsService.postLikeJSON(`${environment.apiUrl}/auth/login`, params);
     return result;
   }
   getCookie(name: string): string | null {

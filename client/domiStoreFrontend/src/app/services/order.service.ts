@@ -1,15 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { BasicResponse } from '../models/basic-response.model';
+import { RequestService } from './request.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
 
-  constructor(public http: HttpClient) { }
+  constructor(private requestsService: RequestService) { }
 
-  getOrders(params: any) {
-    return this.http.get(`${environment.apiUrl}/orders/paginated?page=${params.page}&limit=${params.size}`);
+  async getOrders(): Promise<BasicResponse>{
+    const result= await this.requestsService.get(`${environment.apiUrl}/orders`);
+    return result;
   }
 }

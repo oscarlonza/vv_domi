@@ -59,3 +59,21 @@ export function getBasicError(error: any, print: boolean = false): any {
   print ? console.error(error) : '';
   return error;
 }
+/**
+ * Muestra un Spinner (loading) y muestra el mensaje especificado
+ * @param message
+ */
+export function showSpinner(message: string = 'Cargando...') {
+  document.getElementById('coky-spinner-container')?.removeAttribute('hidden');
+  const spinnerMessage = document.getElementById('coky-spinner-message');
+  spinnerMessage ? (spinnerMessage.innerHTML = message) : '';
+}
+
+/**
+ * Oculta el spinner si está visible
+ */
+export function hideSpinner() {
+  document
+    .getElementById('coky-spinner-container')
+    ?.setAttribute('hidden', 'true');
+}

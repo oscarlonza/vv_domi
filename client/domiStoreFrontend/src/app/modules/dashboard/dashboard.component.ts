@@ -31,7 +31,7 @@ export default class DashboardComponent {
   counter = 0;
   public auth = inject(AuthService);
   logout() {
-    localStorage.removeItem('token');
+    sessionStorage.clear()
     this.router.navigate(['/login']);
   }
   isActive(route: string): boolean {
