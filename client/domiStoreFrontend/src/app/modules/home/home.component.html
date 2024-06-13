@@ -1,29 +1,29 @@
-<div class="store-container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container px-4 px-lg-5">
-            <a class="navbar-brand" href="#!">Domi Store</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="#!">Domi Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
 
-            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
 
-                <div class="d-flex">
-                    <a href="/login" class="btn btn-dark me-2 d-flex items-align-center">
-                        <mat-icon class="me-1">person</mat-icon>
-                        Iniciar sesión
-                    </a>
-                    <button class="btn btn-outline-dark d-flex items-align-center" type="submit">
-                        <mat-icon>shopping_cart_checkout</mat-icon>
-                        Cart
-                        <span class="badge bg-brand text-white ms-1 mt-1 rounded-pill">0</span>
-                    </button>
-                </div>
+            <div class="d-flex">
+                <a href="/login" class="btn btn-brand me-2 d-flex items-align-center">
+                    <mat-icon class="me-1">person</mat-icon>
+                    Iniciar sesión
+                </a>
+                <button class="btn btn-outline-brand d-flex items-align-center" type="submit">
+                    <mat-icon>shopping_cart_checkout</mat-icon>
+                    Cart
+                    <span class="badge bg-brand text-white ms-1 mt-1 rounded-pill">{{cartTotal}}</span>
+                </button>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
+<div class="store-container">
     <!-- Header-->
-    <header class="bg-brand py-5">
+    <header class="bg-brand py-5 m-0">
         <div class="container px-4 px-lg-5 my-5">
             <div class="text-center text-white">
                 <h1 class="display-4 fw-bolder">Domi Store</h1>
@@ -34,8 +34,8 @@
     <!-- Section-->
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
-            <div class="row gx-4 gx-lg-5 row-cols-sm-1 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                <div class="col mb-5" *ngFor="let item of products">
+            <div class="d-flex flex-wrap justify-content-center">
+                <div class="m-2" *ngFor="let item of products">
                     <div class="card h-100 card-product">
                         <!-- Product image-->
                         <img class="card-img-top" src="{{ item.image }}" alt="..." />
@@ -52,15 +52,15 @@
 
                             <div class="text-center m-1 d-flex flex-column align-self-center">
                                 <div class="btn-group mb-1" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-secondary"
+                                    <button type="button" class="btn btn-brand"
                                         (click)="addRestProduct(item, -1)">-</button>
                                     <input type="number" value="{{item.quantity_purchased}}"
                                         ng-model="item.quantity_purchased" [max]="item.quantity" [min]="1"
                                         class="text-center fw-bolder without-buttons" />
-                                    <button type="button" class="btn btn-secondary"
+                                    <button type="button" class="btn btn-brand"
                                         (click)="addRestProduct(item, 1)">+</button>
                                 </div>
-                                <button class="btn btn-outline-dark mt-auto"
+                                <button class="btn btn-outline-brand mt-auto"
                                     (click)="onAddProduct(item)">Agregar</button>
                             </div>
                         </div>
@@ -72,7 +72,9 @@
                                 <star-rating [starType]="'svg'" (starClickChange)="addStar($event.rating, item)"
                                     [disabled]="!item.voted" [rating]="getRatingValue(item)" [staticColor]="'ok'"
                                     [step]="0.5" [showHalfStars]="true"></star-rating>
-                                <div class="text-center"> <mat-icon></mat-icon>{{item.comments}}
+                                <div class="d-flex align-content-center">
+                                    <mat-icon>summarize</mat-icon><span
+                                        class="align-content-center">{{item.comments}}</span>
                                 </div>
                             </div>
                         </div>

@@ -1,20 +1,22 @@
-import { Component, ElementRef, HostListener, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from '../../services/product.service';
 import { SharedModule } from '../shared/shared.module';
 import { NotificationImplService } from '../../services/notification.service';
+import { CommonModule, DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, CommonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export default class HomeComponent {
 
   loading = false;
-  cart: number = 0;
+  cart: any = [];
+  cartTotal: number = 0;
 
   products: any = [];
 
@@ -26,14 +28,23 @@ export default class HomeComponent {
   private defaultValue = 30;
   private limitSignal = signal<number>(this.defaultValue);
 
+  localStorage: any;
+
   public notificationService = inject(NotificationImplService);
   constructor(private dialog: MatDialog,
-    public productService: ProductService, private el: ElementRef
-  ) { }
+    public productService: ProductService, private el: ElementRef, @Inject(DOCUMENT) private document: Document
+  ) {
+    this.localStorage = document.defaultView?.localStorage;
+  }
 
   async ngOnInit() {
     this.loading = true;
     this.getProducts().finally(() => this.loading = false);
+
+    const infoCart = this.localStorage?.getItem('cart');
+
+    this.cart = infoCart ? JSON.parse(infoCart) : [];
+    this.updateCartTotal();
   }
 
   async getProducts() {
@@ -94,7 +105,23 @@ export default class HomeComponent {
   }
 
   onAddProduct(item: any): void {
-    this.cart += item.quantity_purchased;
+
+    const products = this.cart.filter((x: any) => x.id === item.id);
+    if (products.length === 0) {
+      const { id, name, description, price, quantity_purchased: quantity } = item;
+      const product = { id, name, description, price, quantity };
+      this.cart.push(product);
+    }
+    else {
+      const product = products[0];
+      product.quantity += item.quantity_purchased;
+    }
+    this.localStorage?.setItem('cart', JSON.stringify(this.cart));
+    this.updateCartTotal();
+  }
+
+  updateCartTotal(): void {
+    this.cartTotal = this.cart.reduce((a: number, b: any) => a + b.quantity, 0);
   }
 
   private threshold = 800;
@@ -127,6 +154,8 @@ export default class HomeComponent {
 
     // if the user is near end
     if (scrollToBottom < this.threshold) {
+      if (this.pagination.page === this.pagination.totalPages) return;
+
       //this.nearEnd.emit();
       console.log('Request new page');
       this.pagination.page = this.pagination.page + 1;
