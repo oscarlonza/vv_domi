@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>Comentarios y Calificationes</h2>
+<mat-dialog-content class="mat-typography">
+
+    <mat-card class="comments-product-card">
+        <mat-card-header>
+          <mat-card-title-group>
+            <mat-card-title>Shiba Inu</mat-card-title>
+            <mat-card-subtitle>Small</mat-card-subtitle>
+            <img mat-card-sm-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" >
+          </mat-card-title-group>
+        </mat-card-header>
+        <mat-card-content>
+          {{longText}}
+        </mat-card-content>
+      </mat-card>
+
+    <mat-card class="mt-2" *ngFor="let item of products">
+        <mat-card-header>
+            <mat-card-title>Información de facturación</mat-card-title>
+        </mat-card-header>
+        <mat-card-subtitle>
+            <p>Por favor, ingrese la información de facturación para continuar con el pedido.</p>
+        </mat-card-subtitle>
+        <mat-card-content>
+            <div *ngIf="user" class="mt-2">
+                <div class="billing-pair">
+                    <b>Nombre</b>
+                    <p>{{ user?.name || '-' }}</p>
+                </div>
+                <div class="billing-pair">
+                    <b>Dirección</b>
+                    <p>{{ user?.address || '-' }}</p>
+                </div>
+                <div class="billing-pair">
+                    <b>Correo electrónico</b>
+                    <p>{{ user?.email || '-' }}</p>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <div *ngIf="loading;else other_content" class="w-100 text-center">
+        <div class="spinner-border text-primary">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button class="btn btn-outline-brand me-2" (click)="closeDialog()">Cerrar</button>
+    <a *ngIf="!user" href="/login" class="btn btn-brand me-2 d-flex items-align-center">
+        <mat-icon class="me-1">person</mat-icon>
+        Iniciar sesión
+    </a>
+    <button *ngIf="user" class="btn btn-brand" (click)="create()">Registrar pedido</button>
+</mat-dialog-actions>

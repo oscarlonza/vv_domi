@@ -10,8 +10,8 @@ import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'DialogCart',
-  templateUrl: './cart.component.html',
-  styleUrls: ['./home.component.scss', './cart.component.scss'],
+  templateUrl: './dialogCart.component.html',
+  styleUrls: ['./home.component.scss', './dialogCart.component.scss'],
   standalone: true,
   imports: [SharedModule, MatCardModule]
 })
