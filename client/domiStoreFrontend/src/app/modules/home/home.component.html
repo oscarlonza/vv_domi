@@ -7,19 +7,29 @@
 
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
 
-            <div class="d-flex">
+            <div class="d-flex align-items-center">
+                <h5 *ngIf="authUser" class="d-flex items-align-center m-0 me-2"><mat-icon class="me-1">person</mat-icon>{{getUserName()}}</h5>
                 <a *ngIf="!authUser" href="/login" class="btn btn-brand me-2 d-flex items-align-center">
                     <mat-icon class="me-1">person</mat-icon>
                     Iniciar sesión
                 </a>
-                <a *ngIf="authUser" href="/store/home" class="btn btn-brand me-2 d-flex items-align-center">
+                <a *ngIf="isAuthUserAdmin()" href="/dashboard/order"
+                    class="btn btn-brand me-2 d-flex items-align-center">
                     <mat-icon class="me-1">shopping_bag</mat-icon>
-                    Mis ordenes
+                    Mis pedidos
                 </a>
-                <button class="btn btn-outline-brand d-flex items-align-center" type="submit" (click)="openDialog()">
+                <button *ngIf="authUser&&!isAuthUserAdmin()" (click)="openDialogOrders()"
+                    class="btn btn-brand me-2 d-flex items-align-center">
+                    <mat-icon class="me-1">shopping_bag</mat-icon>
+                    Mis pedidos
+                </button>
+                <button class="btn btn-outline-brand me-2 d-flex items-align-center" type="submit" (click)="openDialog()" matTooltip="Ver carrito de compra">
                     <mat-icon>shopping_cart</mat-icon>
-                    Cart
+                    Carrito
                     <span class="badge bg-brand text-white ms-1 mt-1 rounded-pill">{{ cartService.cartTotal }}</span>
+                </button>
+                <button *ngIf="authUser" class="btn btn-outline-brand d-flex items-align-center" type="submit" matTooltip="Cerrar sesión" (click)="logout()">
+                    <mat-icon>logout</mat-icon>
                 </button>
             </div>
         </div>
@@ -76,7 +86,7 @@
                         <div class="card-footer pt-0 border-top-0 bg-transparent">
                             <div class="rating" (click)="openComents(item)">
                                 <star-rating [starType]="'svg'" [rating]="getRatingValue(item)" [staticColor]="'ok'"
-                                [disabled]="true" [step]="0.5" [showHalfStars]="true"></star-rating>
+                                    [disabled]="true" [step]="0.5" [showHalfStars]="true"></star-rating>
                                 <div class="d-flex align-content-center">
                                     <mat-icon>summarize</mat-icon><span
                                         class="align-content-center">{{item.comments}}</span>
