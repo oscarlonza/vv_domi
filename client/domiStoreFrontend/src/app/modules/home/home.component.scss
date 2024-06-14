@@ -12606,7 +12606,7 @@ nav {
   position: fixed !important;
   top: 0;
   width: 100%;
-  z-index: 2;
+  z-index: 3;
   box-shadow: 0 1px 5px 1px rgba(var(--bs-brand-rgb), 0.3);
 }
 
@@ -12651,32 +12651,32 @@ dialog {
 
 @media (max-width: 768px) {
   [mat-cell] {
-      word-break: break-all !important;
-      display: flex;
+    word-break: break-all !important;
+    display: flex;
   }
 
   .mobile-label {
-      display: flex;
-      font-weight: bold;
+    display: flex;
+    font-weight: bold;
   }
 
   .mat-header-row {
-      display: none;
+    display: none;
   }
 
   .mat-row {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      height: fit-content;
-      border-bottom: 1px rgba(0, 0, 0, 0.12) solid;
-      width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: fit-content;
+    border-bottom: 1px rgba(0, 0, 0, 0.12) solid;
+    width: 100%;
 
-      .mat-cell {
-          display: flex;
-          width: 100%;
-          border: none;
-      }
+    .mat-cell {
+      display: flex;
+      width: 100%;
+      border: none;
+    }
   }
 }
 
