@@ -5,6 +5,8 @@ import { SharedModule } from '../shared/shared.module';
 import { NotificationImplService } from '../../services/notification.service';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import DialogCart from './cart.component';
+import { AuthService } from '../../services/auth.service';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-home',
@@ -15,11 +17,7 @@ import DialogCart from './cart.component';
 })
 export default class HomeComponent {
 
-  private SESSION_USER_KEY = 'dataUser';
-
   loading = false;
-  cart: any = [];
-  cartTotal: number = 0;
 
   products: any = [];
 
@@ -30,37 +28,27 @@ export default class HomeComponent {
 
   private defaultValue = 30;
   private limitSignal = signal<number>(this.defaultValue);
-
-  private localStorage: any;
-  private sessionStorage: any;
-
   authUser: any = null;
 
   public notificationService = inject(NotificationImplService);
   constructor(private dialog: MatDialog,
-    public productService: ProductService, private el: ElementRef, @Inject(DOCUMENT) private document: Document
+    public productService: ProductService,
+    @Inject(DOCUMENT) private document: Document,
+    @Inject(AuthService) public authService: AuthService,
+    @Inject(CartService) public cartService: CartService,
+    private el: ElementRef,
+
   ) {
-    this.localStorage = document.defaultView?.localStorage;
-    this.sessionStorage = document.defaultView?.sessionStorage;
+    this.authUser = this.authService.user;
   }
 
   async ngOnInit() {
     this.loading = true;
     this.getProducts().finally(() => this.loading = false);
 
-    //Loading authentication user data
-    const data = this.sessionStorage?.getItem(this.SESSION_USER_KEY);
-    this.authUser = data ? JSON.parse(data) : null;
-
     //Loadind card information
-    this.loadCart();
+    this.cartService.loadCart();
 
-  }
-
-  loadCart(): void {
-    const infoCart = this.localStorage?.getItem('cart');
-    this.cart = infoCart ? JSON.parse(infoCart) : [];
-    this.updateCartTotal();
   }
 
   async getProducts() {
@@ -83,15 +71,14 @@ export default class HomeComponent {
 
   openDialog(): void {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = { products: this.cart, user: this.authUser };
-    dialogConfig.data.updateCartEvent = (products: any) => this.updateCart(products);
+    dialogConfig.data = { user: this.authUser };
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
 
     const dialogRef = this.dialog.open(DialogCart, dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
-      this.loadCart();
+      this.cartService.loadCart();
 
       console.log(`Dialog result: ${result}`);
     });
@@ -131,31 +118,9 @@ export default class HomeComponent {
   }
 
   onAddProduct(item: any): void {
-
-    const products = this.cart.filter((x: any) => x.id === item.id);
-    if (products.length === 0) {
-      const { ...data } = item;
-      const product = data;
-      this.cart.push(product);
-    }
-    else {
-      const product = products[0];
-      product.quantity_purchased += item.quantity_purchased;
-      product.quantity_purchased = Math.min(product.quantity_purchased, product.quantity);
-    }
-
-    this.updateCart(this.cart);
+    this.cartService.addProductToCart(item);
   }
 
-  public updateCart(products: any[]): void {
-    this.localStorage?.setItem('cart', JSON.stringify(this.cart));
-    this.loadCart()
-    this.updateCartTotal();
-  }
-
-  updateCartTotal(): void {
-    this.cartTotal = this.cart.reduce((a: number, b: any) => a + b.quantity_purchased, 0);
-  }
 
   private threshold = 800;
 

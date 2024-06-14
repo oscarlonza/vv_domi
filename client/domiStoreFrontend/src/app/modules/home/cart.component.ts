@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationImplService } from '../../services/notification.service';
 import { SharedModule } from '../shared/shared.module';
 import { MatCardModule } from '@angular/material/card';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'DialogCart',
@@ -22,6 +23,7 @@ export default class DialogCart implements OnInit {
   products: any = [];
   user: any = null;
   totalPrice: number = 0;
+  
   public notificationService = inject(NotificationImplService);
 
   updateCartEvent: any;
@@ -30,13 +32,14 @@ export default class DialogCart implements OnInit {
     public oriderService: OrderService,
     public dialogRef: MatDialogRef<DialogCart>,
     private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(CartService) private cartService: CartService,
   ) {
   }
   ngOnInit() {
 
     this.user = this.data.user;
-    const products = this.data.products;
+    const products = Object.values(this.cartService.cart).flat();
     this.updateCartEvent = (products: any) => this.data.updateCartEvent(products);
 
     products.forEach((product: any) => {
@@ -81,7 +84,7 @@ export default class DialogCart implements OnInit {
 
     product.total = product.quantity_purchased * product.price;
 
-    this.updateCartEvent(this.products);
+    this.cartService.updateCart(this.products);
   }
 
 
