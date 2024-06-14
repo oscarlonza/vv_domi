@@ -35,6 +35,10 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'signup',
+        loadComponent: () => import('./modules/signup/signup.component')
+    },
+    {
         path: '**',
         redirectTo: 'store/home'
     }
