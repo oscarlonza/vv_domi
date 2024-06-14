@@ -119,7 +119,7 @@ export class DialogProduct implements OnInit {
       name: ["", [Validators.required]],
       description: ["", [Validators.required]],
       price: ["", [Validators.required]],
-      quantity: ["", [Validators.required]]
+      quantity: [0, [Validators.required]]
     });
   }
   ngOnInit() {
