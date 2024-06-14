@@ -73,7 +73,7 @@ export default class DialogComments implements OnInit {
   }
 
 
-  private threshold = 800;
+  private threshold = 120;
   private defaultValue = 30;
   private limitSignal = signal<number>(this.defaultValue);
 

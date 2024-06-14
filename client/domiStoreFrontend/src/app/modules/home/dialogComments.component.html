@@ -5,12 +5,12 @@
         <mat-card-header>
             <mat-card-title-group>
                 <mat-card-title>{{product?.name}}</mat-card-title>
-                <mat-card-subtitle>{{product.price}}</mat-card-subtitle>
-                <img mat-card-sm-image src="{{product.image}}" alt="{{product.name}}">
+                <mat-card-subtitle>$ {{product.price}}</mat-card-subtitle>
+                <img height="80" width="auto" src="{{product.image}}" alt="{{product.name}}">
             </mat-card-title-group>
         </mat-card-header>
         <mat-card-content>
-            <div class="comment-content">
+            <div class="comment-content d-flex flex-column justify-content-left">
                 <star-rating [starType]="'svg'" [rating]="getRatingValue(product.rating)" [staticColor]="'ok'"
                     [step]="0.5" [showHalfStars]="true"></star-rating>
                 <p>{{product.description}}</p>
