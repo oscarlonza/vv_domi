@@ -1,0 +1,46 @@
+<form class="card mt-3" [formGroup]="form">
+    <div>
+        <div class="card-header d-flex align-items-center justify-content-between flex-wrap" style="gap: 1rem;">
+            <div class="m-1">
+                <h2 class="m-0 mr-2">
+                    {{title}}
+                </h2>
+                <p class="title-description">
+                    Digite todos los campos
+                </p>
+            </div>
+        </div>
+        <div class="card-body row justify-content-center">
+            <mat-form-field appearance="outline" class="col-12 col-md-8">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="name" type="text" [maxlength]="500">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-12 col-md-8">
+                <mat-label>Correo Eectrónico</mat-label>
+                <input matInput formControlName="email" type="text" [maxlength]="500">
+                <mat-error>Este campo debe ser llenado con un email válido</mat-error>
+                <mat-hint>Ejemplo user&#64;gmail.com</mat-hint>
+            </mat-form-field>
+        </div>
+        <div class="card-body row justify-content-center">
+            <mat-form-field appearance="outline" class="col-12 col-md-8">
+                <mat-label>Contraseña</mat-label>
+                <input matInput formControlName="password" [type]="hide?'text':'password'">
+                <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <mat-hint>La contraseña debe contener 8-20 caracteres</mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-12 col-md-8">
+                <mat-label>Dirección</mat-label>
+                <input matInput formControlName="address" type="text" [maxlength]="500">
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div  class="card-footer d-flex align-items-center justify-content-end gap-2">
+        <button style="margin-top: 20px;" mat-flat-button  type="button" (click)="dialogClose()">Cancelar</button>
+        <button  style="margin-top: 20px;" mat-flat-button color="primary" type="button" (click)="create()">{{actions[action]}}</button>
+
+    </div>
+</form>

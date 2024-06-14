@@ -21,6 +21,9 @@ import { NotificationImplService } from '../../services/notification.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import SignupComponent from '../signup/signup.component';
+
 
 @Component({
   selector: 'app-login',
@@ -45,12 +48,14 @@ export default class LoginComponent {
   public notificationService = inject(NotificationImplService);
 
   validationCode = signal(false);
-
+  static switch: any = 0;
   loginForm = this.fb.group({
     email: ['', Validators.required],
     password: ['', Validators.required],
   });
+  constructor(private dialog: MatDialog,) {
 
+  }
   async signIn() {
     const { email, password } = this.loginForm.value;
     const result = await this.auth.login({ email, password });
@@ -68,7 +73,12 @@ export default class LoginComponent {
       }
 
     } else {
-      this.notificationService.errorNotification(result.error.message);
+      if (result.error.is_verified == false) {
+        //TODO LLamar modal de codigo
+        console.log('modall');
+      } else {
+        this.notificationService.errorNotification(result.error.message);
+      }
     }
   }
 
@@ -77,5 +87,27 @@ export default class LoginComponent {
   }
   goToStore(): void {
     this.router.navigate(['/store/home']);
+  }
+  openSignup(data: any, action: string) {
+    const dialogConfig = new MatDialogConfig();
+    data.action = action;
+    dialogConfig.data = data;
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '57%';
+    dialogConfig.height = "fit-content";
+    const dialogRef = this.dialog.open(SignupComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (LoginComponent.switch == 1) {
+        //this.getProducts();
+      }
+      LoginComponent.switch = 0;
+    });
+
+  }
+  static changeValueDialog(value: any) {
+    this.switch = value
+
   }
 }

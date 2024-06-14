@@ -33,10 +33,15 @@ export class AuthService {
     }
     return null;
   }
-  logout() {
+  async logout() {
+    const result = await this.requestsService.postLikeJSON(`${environment.apiUrl}/auth/logout`, {});
+    console.log('logout',result);
     sessionStorage.clear()
     this.user = undefined;
     this.router.navigate(['/store/home']);
   }
-
+  async register(params: any): Promise<BasicResponse> {
+    const result = await this.requestsService.postLikeJSON(`${environment.apiUrl}/auth/register`, params);
+    return result;
+  }
 }

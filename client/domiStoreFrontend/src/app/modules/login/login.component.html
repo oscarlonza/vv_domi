@@ -7,9 +7,9 @@
             <div class="login-form">
 
 
-                <form [formGroup]="loginForm" (ngSubmit)="signIn()">
+                <form [formGroup]="loginForm">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Username" formControlName="email" />
+                        <input matInput placeholder="Correo electrónico" formControlName="email" />
 
                         @if(loginForm.controls['email'].hasError('required')){
                         <mat-error>El correo eletronico es requerido</mat-error>
@@ -17,7 +17,7 @@
                         }
                     </mat-form-field>
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Password" type="password" formControlName="password" />
+                        <input matInput placeholder="Contraseña" type="password" formControlName="password" />
                         <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
                             La contraseña es requerida
                         </mat-error>
@@ -27,6 +27,8 @@
                         [disabled]="loginForm.invalid">
                         Iniciar Sesión
                     </button>
+                    <span class="register-business">¿No tienes cuenta? Registrate <a color="primary" style="cursor: pointer;text-decoration: underline;color: #3f51b5;;"
+                        (click)="openSignup({},'new')">aquí</a></span>
                 </form>
 
 
