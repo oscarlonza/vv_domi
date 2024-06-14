@@ -81,7 +81,7 @@ export function logout(req, res) {
     if (internal)
         return res.status(200);
     else
-        return res.sendStatus(200);
+        return res.status(200).json({ message: 'Sesión cerrada' });
 }
 
 export async function verify(req, res) {

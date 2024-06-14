@@ -57,9 +57,16 @@ export default class LoginComponent {
     console.log('result', result);
     if (result.success) {
       environment.accessToken = await this.auth.getCookie('token')!;
+      const role = result.data.role;
       sessionStorage.setItem('dataUser', JSON.stringify(result.data));
+      this.auth.user = JSON.parse(sessionStorage.getItem('dataUser')!);
       console.log('token', environment.accessToken);
-      this.goToDashboard();
+      if (role === 'superadmin') {
+        this.goToDashboard();
+      } else {
+        this.goToStore();
+      }
+
     } else {
       this.notificationService.errorNotification(result.error.message);
     }
@@ -67,5 +74,8 @@ export default class LoginComponent {
 
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);
+  }
+  goToStore(): void {
+    this.router.navigate(['/store/home']);
   }
 }
