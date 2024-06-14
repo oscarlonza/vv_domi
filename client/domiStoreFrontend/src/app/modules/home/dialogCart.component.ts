@@ -10,8 +10,8 @@ import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'DialogCart',
-  templateUrl: './cart.component.html',
-  styleUrls: ['./home.component.scss', './cart.component.scss'],
+  templateUrl: './dialogCart.component.html',
+  styleUrls: ['./home.component.scss', './dialogCart.component.scss'],
   standalone: true,
   imports: [SharedModule, MatCardModule]
 })
@@ -29,7 +29,7 @@ export default class DialogCart implements OnInit {
   public notificationService = inject(NotificationImplService);
 
   constructor(
-    public oriderService: OrderService,
+    public orderService: OrderService,
     public dialogRef: MatDialogRef<DialogCart>,
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -64,7 +64,7 @@ export default class DialogCart implements OnInit {
     try {
       this.loading = true;
 
-      const result = await this.oriderService.createOrder(this.products);
+      const result = await this.orderService.createOrder(this.products);
       if (result.success) {
         this.notificationService.successNotification('Registro de orden', "La orden se ha creado correctamente.");
         this.cartService.updateCart([]);
