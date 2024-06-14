@@ -1,93 +1,100 @@
 <h2 mat-dialog-title>Crear Pedido</h2>
 <mat-dialog-content class="mat-typography">
 
-    <mat-card>
-        <mat-card-header>
-            <mat-card-title>Lista de productos</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <table mat-table [dataSource]="products">
-                <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef>Nombre producto</th>
-                    <td mat-cell *matCellDef="let element">
-                        <span class="mobile-label mr-2">Nombre producto:</span>
-                        {{ element.name }}
-                    </td>
-                    <td mat-footer-cell *matFooterCellDef></td>
-                </ng-container>
-                <ng-container matColumnDef="quantity">
-                    <th mat-header-cell *matHeaderCellDef>Cantidad</th>
-                    <td mat-cell *matCellDef="let element">
-                        <span class="mobile-label mr-2">Cantidad:</span>
-                        {{ element.quantity_purchased }}
-                    </td>
-                    <td mat-footer-cell *matFooterCellDef></td>
-                </ng-container>
-                <ng-container matColumnDef="price">
-                    <th mat-header-cell *matHeaderCellDef>Precio unitario</th>
-                    <td mat-cell *matCellDef="let element">
-                        <span class="mobile-label mr-2">Precio unitario:</span>
-                        $ {{ element.price }}
-                    </td>
-                    <td mat-footer-cell *matFooterCellDef>Total venta</td>
-                </ng-container>
-                <ng-container matColumnDef="total">
-                    <th mat-header-cell *matHeaderCellDef>Precio total</th>
-                    <td mat-cell *matCellDef="let element">
-                        <span class="mobile-label mr-2">Precio total:</span>
-                        $ {{ element.total }}
-                    </td>
-                    <td mat-footer-cell *matFooterCellDef> $ {{totalPrice}} </td>
-                </ng-container>
-                <ng-container matColumnDef="actions">
-                    <th mat-header-cell *matHeaderCellDef class="pr-3 pl-3">Acciones</th>
-                    <td mat-cell *matCellDef="let element" class="p-1 pr-3 pl-3" style="white-space: nowrap">
-                        <button mat-icon-button (click)="addRestProduct(element, -1)"
-                            matTooltip="Restar un artículo">
-                            <mat-icon>remove</mat-icon>
-                        </button>
-                        <button mat-icon-button (click)="addRestProduct(element, 1)"
-                            matTooltip="Agregar un artículo">
-                            <mat-icon>add</mat-icon>
-                        </button>
-                        <button mat-icon-button (click)="addRestProduct(element, 0)"
-                            matTooltip="Eliminar producto">
-                            <mat-icon>delete</mat-icon>
-                        </button>
-                    </td>
-                    <td mat-footer-cell *matFooterCellDef></td>
-                </ng-container>
+    <div *ngIf="loading;else other_content" class="w-100 text-center">
+        <div class="spinner-border text-primary">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-                <tr mat-footer-row *matFooterRowDef="displayedColumns" class="total-row"></tr>
+    <ng-template #other_content>
+        <mat-card #other_content>
+            <mat-card-header>
+                <mat-card-title>Lista de productos</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <table mat-table [dataSource]="dataSource">
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef>Nombre producto</th>
+                        <td mat-cell *matCellDef="let element">
+                            <span class="mobile-label mr-2">Nombre producto:</span>
+                            {{ element.name }}
+                        </td>
+                        <td mat-footer-cell *matFooterCellDef></td>
+                    </ng-container>
+                    <ng-container matColumnDef="quantity">
+                        <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+                        <td mat-cell *matCellDef="let element">
+                            <span class="mobile-label mr-2">Cantidad:</span>
+                            {{ element.quantity_purchased }}
+                        </td>
+                        <td mat-footer-cell *matFooterCellDef></td>
+                    </ng-container>
+                    <ng-container matColumnDef="price">
+                        <th mat-header-cell *matHeaderCellDef>Precio unitario</th>
+                        <td mat-cell *matCellDef="let element">
+                            <span class="mobile-label mr-2">Precio unitario:</span>
+                            $ {{ element.price }}
+                        </td>
+                        <td mat-footer-cell *matFooterCellDef>Total venta</td>
+                    </ng-container>
+                    <ng-container matColumnDef="total">
+                        <th mat-header-cell *matHeaderCellDef>Precio total</th>
+                        <td mat-cell *matCellDef="let element">
+                            <span class="mobile-label mr-2">Precio total:</span>
+                            $ {{ element.total }}
+                        </td>
+                        <td mat-footer-cell *matFooterCellDef> $ {{totalPrice}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef class="pr-3 pl-3">Acciones</th>
+                        <td mat-cell *matCellDef="let element" class="p-1 pr-3 pl-3" style="white-space: nowrap">
+                            <button mat-icon-button (click)="addRestProduct(element, -1)"
+                                matTooltip="Restar un artículo">
+                                <mat-icon>remove</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="addRestProduct(element, 1)"
+                                matTooltip="Agregar un artículo">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="addRestProduct(element, 0)" matTooltip="Eliminar producto">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                        <td mat-footer-cell *matFooterCellDef></td>
+                    </ng-container>
 
-            </table>
-        </mat-card-content>
-    </mat-card>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                    <tr mat-footer-row *matFooterRowDef="displayedColumns" class="total-row"></tr>
 
-    <mat-card class="mt-2">
-        <mat-card-header>
-            <mat-card-title>Información de facturación</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <div *ngIf="user" class="mt-2">
-                <div class="billing-pair">
-                    <b>Nombre</b>
-                    <p>{{ user?.name || '-' }}</p>
+                </table>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card class="mt-2">
+            <mat-card-header>
+                <mat-card-title>Información de facturación</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div *ngIf="user" class="mt-2">
+                    <div class="billing-pair">
+                        <b>Nombre</b>
+                        <p>{{ user?.name || '-' }}</p>
+                    </div>
+                    <div class="billing-pair">
+                        <b>Dirección</b>
+                        <p>{{ user?.address || '-' }}</p>
+                    </div>
+                    <div class="billing-pair">
+                        <b>Correo electrónico</b>
+                        <p>{{ user?.email || '-' }}</p>
+                    </div>
                 </div>
-                <div class="billing-pair">
-                    <b>Dirección</b>
-                    <p>{{ user?.address || '-' }}</p>
-                </div>
-                <div class="billing-pair">
-                    <b>Correo electrónico</b>
-                    <p>{{ user?.email || '-' }}</p>
-                </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
+            </mat-card-content>
+        </mat-card>
 
+    </ng-template>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <button class="btn btn-outline-brand me-2" (click)="closeDialog()">Cerrar</button>
@@ -95,5 +102,5 @@
         <mat-icon class="me-1">person</mat-icon>
         Iniciar sesión
     </a>
-    <button *ngIf="user" class="btn btn-brand">Registrar pedido</button>
+    <button *ngIf="user" class="btn btn-brand" (click)="create()">Registrar pedido</button>
 </mat-dialog-actions>

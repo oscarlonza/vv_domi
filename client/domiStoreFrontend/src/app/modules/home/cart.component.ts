@@ -20,13 +20,13 @@ export default class DialogCart implements OnInit {
   class: string = ""
   title: string = "Listado de pedidos"
 
+  loading: boolean = false;
   products: any = [];
+  dataSource: any = [];
   user: any = null;
   totalPrice: number = 0;
-  
-  public notificationService = inject(NotificationImplService);
 
-  updateCartEvent: any;
+  public notificationService = inject(NotificationImplService);
 
   constructor(
     public oriderService: OrderService,
@@ -39,15 +39,21 @@ export default class DialogCart implements OnInit {
   ngOnInit() {
 
     this.user = this.data.user;
-    const products = Object.values(this.cartService.cart).flat();
-    this.updateCartEvent = (products: any) => this.data.updateCartEvent(products);
+    const [...products] = this.cartService.cart;
 
+    this.updateTotalprice(products);
+
+    this.products = products;
+    this.dataSource = new MatTableDataSource(this.products);
+
+  }
+
+  updateTotalprice(products:any){
+    this.totalPrice = 0;
     products.forEach((product: any) => {
       product.total = product.quantity_purchased * product.price;
       this.totalPrice += product.total;
     });
-
-    this.products = new MatTableDataSource(products);
 
   }
 
@@ -56,38 +62,52 @@ export default class DialogCart implements OnInit {
   }
   async create() {
     try {
-      //const result = await this.productService.deleteProduct(this.data.id)
-      //if (result.success) {
-      //  this.notificationService.successNotification('Eliminación de productos', result.message);
-      //  await ProductsComponent.changeValueDialog(1);
-      //  this.closeDialog('OK');
-      //} else {
-      //  this.notificationService.errorNotification('Error en la eliminación de producto.');
-      //}
-      //hideSpinner()
+      this.loading = true;
 
-      this.notificationService.successNotification("TITLE", "OK");
+      const result = await this.oriderService.createOrder(this.products);
+      if (result.success) {
+        this.notificationService.successNotification('Registro de orden', "La orden se ha creado correctamente.");
+        this.cartService.updateCart([]);
+        this.products = [];
+        this.dataSource = new MatTableDataSource(this.products);
+        this.dialogRef.close('OK');
+      } else {
+        this.notificationService.errorNotification(result.message);
+      }
+      
     } catch (error) {
       //hideSpinner()
       //const message = getErrorMessage(error)
-      this.notificationService.errorNotification("Fail");
+      this.notificationService.errorNotification("Un error ha ocurrido durante la creación de la orden. Por favor, intente de nuevo.");
+    }
+    finally{
+      
+      this.loading = false;
+
     }
 
   }
 
   addRestProduct(product: any, quantity: number): void {
-    product.quantity_purchased += quantity;
-    if (product.quantity < 1)
-      product.quantity_purchased = 1;
-    else if (product.quantity_purchased > product.quantity)
-      product.quantity_purchased = product.quantity;
 
-    product.total = product.quantity_purchased * product.price;
+    if(quantity === 0) {
+      this.products = this.products.filter((p: any) => p.id !== product.id);  
+      this.dataSource = new MatTableDataSource(this.products);    
+    }
+    else{
 
+      product.quantity_purchased += quantity;
+      if (product.quantity_purchased < 1)
+        product.quantity_purchased = 1;
+      else if (product.quantity_purchased > product.quantity)
+        product.quantity_purchased = product.quantity;
+  
+      product.total = product.quantity_purchased * product.price;
+  
+    }
+    this.updateTotalprice(this.products);
     this.cartService.updateCart(this.products);
   }
-
-
 
   openSnackBar(message: string, action: string, type: string) {
     this.snackBar.open(message, action, {

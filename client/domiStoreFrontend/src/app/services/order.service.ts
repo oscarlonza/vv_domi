@@ -11,14 +11,19 @@ export class OrderService {
 
   constructor(private requestsService: RequestService) { }
 
-  async getOrders(): Promise<BasicResponse>{
-    const result= await this.requestsService.get(`${environment.apiUrl}/orders`);
+  async getOrders(): Promise<BasicResponse> {
+    const result = await this.requestsService.get(`${environment.apiUrl}/orders`);
     return result;
   }
-  async changeStatusOrder(params: any,orderId:string): Promise<BasicResponse> {
+  async changeStatusOrder(params: any, orderId: string): Promise<BasicResponse> {
     const result = await this.requestsService.putLikeJSON(
       `${environment.apiUrl}/orders/${orderId}`, params
     );
     return result
+  }
+
+  async createOrder(products: any): Promise<BasicResponse> {
+    const result = await this.requestsService.postLikeJSON(`${environment.apiUrl}/orders`, { products });
+    return result;
   }
 }
