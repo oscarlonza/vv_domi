@@ -1,0 +1,17 @@
+
+
+.mat-mdc-row:hover .mat-mdc-cell {
+    background-color: rgba(var(--bs-brand-rgb),0.1);
+  }
+
+.mobile-label {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-label {
+        /*display: flex;*/
+        /*font-weight: bold;*/
+    }
+
+}

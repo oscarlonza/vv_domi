@@ -8,12 +8,16 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
 
             <div class="d-flex">
-                <a href="/login" class="btn btn-brand me-2 d-flex items-align-center">
+                <a *ngIf="!authUser" href="/login" class="btn btn-brand me-2 d-flex items-align-center">
                     <mat-icon class="me-1">person</mat-icon>
                     Iniciar sesión
                 </a>
-                <button class="btn btn-outline-brand d-flex items-align-center" type="submit">
-                    <mat-icon>shopping_cart_checkout</mat-icon>
+                <a *ngIf="authUser" href="/store/home" class="btn btn-brand me-2 d-flex items-align-center">
+                    <mat-icon class="me-1">shopping_bag</mat-icon>
+                    Mis ordenes
+                </a>
+                <button class="btn btn-outline-brand d-flex items-align-center" type="submit" (click)="openDialog()">
+                    <mat-icon>shopping_cart</mat-icon>
                     Cart
                     <span class="badge bg-brand text-white ms-1 mt-1 rounded-pill">{{cartTotal}}</span>
                 </button>
@@ -97,3 +101,4 @@
         </div>
     </footer>
 </div>
+
