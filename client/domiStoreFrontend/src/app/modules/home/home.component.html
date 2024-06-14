@@ -19,7 +19,7 @@
                 <button class="btn btn-outline-brand d-flex items-align-center" type="submit" (click)="openDialog()">
                     <mat-icon>shopping_cart</mat-icon>
                     Cart
-                    <span class="badge bg-brand text-white ms-1 mt-1 rounded-pill">{{cartTotal}}</span>
+                    <span class="badge bg-brand text-white ms-1 mt-1 rounded-pill">{{ cartService.cartTotal }}</span>
                 </button>
             </div>
         </div>
@@ -56,7 +56,7 @@
                                 </div>
 
                                 <div class="text-center m-1 d-flex flex-column align-self-center">
-                                    <div class="btn-group mb-1" role="group" aria-label="Basic example">
+                                    <div class="btn-group mb-1">
                                         <button type="button" class="btn btn-brand"
                                             (click)="addRestProduct(item, -1)">-</button>
                                         <input type="number" value="{{item.quantity_purchased}}"
@@ -89,7 +89,7 @@
             </div>
         </div>
         <div class="w-100 text-center">
-            <div *ngIf="loading" class="spinner-border text-primary" role="status">
+            <div *ngIf="loading" class="spinner-border text-primary">
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
