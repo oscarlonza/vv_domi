@@ -1,36 +1,52 @@
 <h2 mat-dialog-title>Comentarios y Calificationes</h2>
-<mat-dialog-content class="mat-typography">
+<mat-dialog-content class="mat-typography" cdkScrollable>
 
+    <h3 mat-dialog-title>Producto</h3>
     <mat-card class="comments-product-card">
         <mat-card-header>
             <mat-card-title-group>
                 <mat-card-title>{{product?.name}}</mat-card-title>
                 <mat-card-subtitle>$ {{product.price}}</mat-card-subtitle>
-                <img height="80" width="auto" src="{{product.image}}" alt="{{product.name}}">
+                <img class="ms-2" height="80" width="auto" src="{{product.image}}" alt="{{product.name}}">
             </mat-card-title-group>
         </mat-card-header>
         <mat-card-content>
-            <div class="comment-content d-flex flex-column justify-content-left">
+            <div class="mt-2 comment-content d-flex flex-column justify-content-left">
                 <star-rating [starType]="'svg'" [rating]="getRatingValue(product.rating)" [staticColor]="'ok'"
-                    [step]="0.5" [showHalfStars]="true"></star-rating>
+                    [disabled]="true" [step]="0.5" [showHalfStars]="true"></star-rating>
                 <p>{{product.description}}</p>
             </div>
         </mat-card-content>
     </mat-card>
 
-    <mat-card class="mt-2" *ngFor="let item of comments">
-        <mat-card-header>
-            <mat-card-title>
-                <star-rating [starType]="'svg'" [rating]="getRatingValue(item.rating)" [staticColor]="'ok'" [step]="0.5"
-                    [showHalfStars]="true"></star-rating>
-            </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <p>{{item.comment}}</p>
-            <p class="fs-s">{{item.user}}</p>
-        </mat-card-content>
+    <h3 mat-dialog-title>Comentarios ({{pagination.totalComments || 0}})</h3>
 
-    </mat-card>
+    <div *ngIf="!loading">
+        <mat-card *ngIf="!commentsExist();else other_content" class="mt-2">
+            <mat-card-content>
+                <p>
+                    No existen comentarios sobre este producto.
+                </p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <ng-template #other_content>
+        <div *ngFor="let item of comments">
+            <mat-card #anothercontent class="mt-2">
+                <mat-card-header>
+                    <mat-card-title>
+                        <star-rating [starType]="'svg'" [rating]="getRatingValue(item.rating)" [staticColor]="'ok'"
+                            [disabled]="true" [step]="0.5" [showHalfStars]="true"></star-rating>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>{{item.comment}}</p>
+                    <p class="fs-s">{{item.user}}</p>
+                </mat-card-content>
+
+            </mat-card>
+        </div>
+    </ng-template>
     <div *ngIf="loading" class="w-100 text-center">
         <div class="spinner-border text-primary">
             <span class="visually-hidden">Loading...</span>

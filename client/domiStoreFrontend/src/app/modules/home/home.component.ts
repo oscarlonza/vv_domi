@@ -89,7 +89,8 @@ export default class HomeComponent {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = product;
     dialogConfig.disableClose = false;
-    dialogConfig.autoFocus = true;
+    dialogConfig.autoFocus = false;
+    dialogConfig.maxWidth = '590px';
 
     this.dialog.open(DialogComments, dialogConfig);
 

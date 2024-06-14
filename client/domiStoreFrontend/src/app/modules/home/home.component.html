@@ -76,7 +76,7 @@
                         <div class="card-footer pt-0 border-top-0 bg-transparent">
                             <div class="rating" (click)="openComents(item)">
                                 <star-rating [starType]="'svg'" [rating]="getRatingValue(item)" [staticColor]="'ok'"
-                                    [step]="0.5" [showHalfStars]="true"></star-rating>
+                                [disabled]="true" [step]="0.5" [showHalfStars]="true"></star-rating>
                                 <div class="d-flex align-content-center">
                                     <mat-icon>summarize</mat-icon><span
                                         class="align-content-center">{{item.comments}}</span>
