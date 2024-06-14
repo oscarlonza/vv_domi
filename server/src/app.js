@@ -6,6 +6,9 @@ import authRouter from './routes/authRoute.js';
 import productRouter from './routes/productRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import cors from 'cors';
+import db from "./db.js";
+
+await db();
 
 const app = express();
 
