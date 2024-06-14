@@ -56,7 +56,8 @@ export async function login(req, res) {
             name: userFound.name,
             email: userFound.email,
             address: userFound.address,
-            role: userFound.role
+            role: userFound.role,
+            is_verified: userFound.is_verified
         };
 
         //El usuario requiere verificación
