@@ -53,9 +53,9 @@ export default class LoginComponent {
     email: ['', Validators.required],
     password: ['', Validators.required],
   });
-constructor(private dialog: MatDialog,){
+  constructor(private dialog: MatDialog,) {
 
-}
+  }
   async signIn() {
     const { email, password } = this.loginForm.value;
     const result = await this.auth.login({ email, password });
@@ -73,7 +73,12 @@ constructor(private dialog: MatDialog,){
       }
 
     } else {
-      this.notificationService.errorNotification(result.error.message);
+      if (result.error.is_verified == false) {
+        //TODO LLamar modal de codigo
+        console.log('modall');
+      } else {
+        this.notificationService.errorNotification(result.error.message);
+      }
     }
   }
 
@@ -83,7 +88,7 @@ constructor(private dialog: MatDialog,){
   goToStore(): void {
     this.router.navigate(['/store/home']);
   }
-  openSignup(data:any,action:string) {
+  openSignup(data: any, action: string) {
     const dialogConfig = new MatDialogConfig();
     data.action = action;
     dialogConfig.data = data;
