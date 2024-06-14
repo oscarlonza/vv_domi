@@ -55,3 +55,13 @@ body {
         }
     }
 }
+
+
+.star.disabled,
+.rating.disabled .star-container .star,
+.rating.disabled .rating.label-value .star-container .star,
+.rating.disabled .star-container .rating.star .star.label-value,
+.rating.disabled .star-container .rating.star .star-container .star,
+.rating.disabled .star.label-value {
+  opacity: 1 !important;
+}
