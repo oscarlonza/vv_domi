@@ -15,4 +15,10 @@ export class OrderService {
     const result= await this.requestsService.get(`${environment.apiUrl}/orders`);
     return result;
   }
+  async changeStatusOrder(params: any,orderId:string): Promise<BasicResponse> {
+    const result = await this.requestsService.putLikeJSON(
+      `${environment.apiUrl}/orders/${orderId}`, params
+    );
+    return result
+  }
 }

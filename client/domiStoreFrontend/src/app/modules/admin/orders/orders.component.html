@@ -1,5 +1,5 @@
 <div class="shadow mt-3">
-    <div class="card {{ class }}">        
+    <div class="card {{ class }}">
         <div class="card-header margin-top d-flex align-items-center justify-content-between flex-wrap"
             style="gap: 1rem">
             <div
@@ -9,11 +9,22 @@
                 </h2>
                 <p>{{ description | slice : 0 : 200 }}</p>
             </div>
-            <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Buscar</mat-label>
-                <input matInput type="text" placeholder="Buscar" (keyup)="applyFilter($event)" #input />
-                <mat-icon matSuffix>search</mat-icon>
-            </mat-form-field>
+            <div class="row w-100">
+                <div class="col-10">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Buscar</mat-label>
+                        <input matInput type="text" placeholder="Buscar" (keyup)="applyFilter($event)" #input />
+                        <mat-icon matSuffix>search</mat-icon>
+                    </mat-form-field>
+                </div>
+                <div class="col-2">
+                    <mat-icon style="cursor:pointer;font-size: 29px;" (click)="getOrders()">
+                        refresh
+                    </mat-icon>
+                </div>
+            </div>
+           
+
         </div>
 
         <div class="card-body overflow-auto p-0">
@@ -43,25 +54,26 @@
                     <th mat-header-cell *matHeaderCellDef>Estado</th>
                     <td mat-cell *matCellDef="let element">
                         <span class="mobile-label mr-2">Estado:</span>
-                        <button mat-flat-button
-                        [ngClass]="element.status=='A' ? 'btn active' : element.status=='I' ? 'btn inactive': 'btn done'"
-                        type="button">{{element.status=='A' ? "Activo" : element.status=='I' ? "Inactivo" :
-                        "Realizado"}}</button>
+                        <button mat-flat-button class="btn btn_status"
+                            [ngStyle]="{'border': getOrderStatusColor(element.status)}"
+                            type="button">{{getOrderStatusText(element.status)}}</button>
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef class="pr-3 pl-3">Acciones</th>
                     <td mat-cell *matCellDef="let element" class="p-1 pr-3 pl-3" style="white-space: nowrap">
-                        <button mat-icon-button (click)="openDialogProduct(element, 'edit')" matTooltip="Editar producto">
+                        <button mat-icon-button (click)="openDialogOrder(element, 'change')"
+                            matTooltip="Cambiar estado">
                             <mat-icon>edit</mat-icon>
                         </button>
-                        <button mat-icon-button (click)="openDialogProduct(element, 'edit')" matTooltip="Editar producto">
+                        <button mat-icon-button (click)="openDialogOrder(element, 'accept')"
+                            matTooltip="Aceptar pedido">
                             <mat-icon>check</mat-icon>
                         </button>
-                        <button mat-icon-button (click)="openDialogProduct(element, 'delete')"
-                            matTooltip="Eliminar producto">
-                            <mat-icon>cancel</mat-icon>
+                        <button mat-icon-button (click)="openDialogOrder(element, 'reject')"
+                            matTooltip="Rechazar pedido">
+                            <mat-icon>close</mat-icon>
                         </button>
                     </td>
                 </ng-container>
