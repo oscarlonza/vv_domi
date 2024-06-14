@@ -69,15 +69,14 @@
                                         (click)="onAddProduct(item)">Agregar</button>
                                 </div>
                             </div>
-                            <p class="">$ {{item.description}}</p>
+                            <p class="">{{item.description}}</p>
                         </div>
 
                         <!-- Product actions-->
                         <div class="card-footer pt-0 border-top-0 bg-transparent">
-                            <div class="rating">
-                                <star-rating [starType]="'svg'" (starClickChange)="addStar($event.rating, item)"
-                                    [disabled]="!item.voted" [rating]="getRatingValue(item)" [staticColor]="'ok'"
-                                    [step]="0.5" [showHalfStars]="true"></star-rating>
+                            <div class="rating" (click)="openComents(item)">
+                                <star-rating [starType]="'svg'" [rating]="getRatingValue(item)" [staticColor]="'ok'"
+                                [disabled]="true" [step]="0.5" [showHalfStars]="true"></star-rating>
                                 <div class="d-flex align-content-center">
                                     <mat-icon>summarize</mat-icon><span
                                         class="align-content-center">{{item.comments}}</span>
@@ -101,4 +100,3 @@
         </div>
     </footer>
 </div>
-

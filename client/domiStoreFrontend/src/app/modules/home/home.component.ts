@@ -4,9 +4,11 @@ import { ProductService } from '../../services/product.service';
 import { SharedModule } from '../shared/shared.module';
 import { NotificationImplService } from '../../services/notification.service';
 import { CommonModule, DOCUMENT } from '@angular/common';
-import DialogCart from './cart.component';
+import DialogCart from './dialogCart.component';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
+import { isScrollNearEnd } from '../../services/functions.service';
+import DialogComments from './dialogComments.component';
 
 @Component({
   selector: 'app-home',
@@ -26,8 +28,7 @@ export default class HomeComponent {
     page: 1
   };
 
-  private defaultValue = 30;
-  private limitSignal = signal<number>(this.defaultValue);
+
   authUser: any = null;
 
   public notificationService = inject(NotificationImplService);
@@ -84,12 +85,19 @@ export default class HomeComponent {
     });
   }
 
-  goToProductDetail(id: any): void {
-    console.log('id', id);
+  openComents(product:any):void{
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = product;
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = false;
+    dialogConfig.maxWidth = '590px';
+
+    this.dialog.open(DialogComments, dialogConfig);
+
   }
 
-  getRatingValue(product: any): number {
-    return Number(product.rating);
+  goToProductDetail(id: any): void {
+    console.log('id', id);
   }
 
   getDescription(product: any): string {
@@ -97,6 +105,10 @@ export default class HomeComponent {
     if (!description) return '';
     const max: number = 100;
     return description.length > max ? description.substr(0, max) + '...' : description;
+  }
+
+  getRatingValue(product: any): number {
+    return Number(product.rating);
   }
 
   getRatingValueFormatted(product: any): string {
@@ -121,40 +133,17 @@ export default class HomeComponent {
     this.cartService.addProductToCart(item);
   }
 
-
-  private threshold = 800;
+  private threshold = 800;  
+  private defaultValue = 30;
+  private limitSignal = signal<number>(this.defaultValue);
 
   @HostListener('window:scroll', ['$event.target'])
   windowScrollEvent(event: KeyboardEvent) {
     if (this.loading) return;
 
-    // height of whole window page
-    const heightOfWholePage = window.document.documentElement.scrollHeight;
-
-    // how big in pixels the element is
-    const heightOfElement = this.el.nativeElement.scrollHeight;
-
-    // currently scrolled Y position
-    const currentScrolledY = window.scrollY;
-
-    // height of opened window - shrinks if console is opened
-    const innerHeight = window.innerHeight;
-
-    /**
-     * the area between the start of the page and when this element is visible
-     * in the parent component
-     */
-    const spaceOfElementAndPage = heightOfWholePage - heightOfElement;
-
-    // calculated whether we are near the end
-    const scrollToBottom =
-      heightOfElement - innerHeight - currentScrolledY + spaceOfElementAndPage;
-
-    // if the user is near end
-    if (scrollToBottom < this.threshold) {
+    if (isScrollNearEnd(this.el, this.threshold)) {
       if (this.pagination.page === this.pagination.totalPages) return;
 
-      //this.nearEnd.emit();
       this.pagination.page = this.pagination.page + 1;
       this.pagination.page = Math.min(this.pagination.page, this.pagination.totalPages);
 
@@ -164,8 +153,6 @@ export default class HomeComponent {
         this.limitSignal.update((val) => val + this.defaultValue);
         this.loading = false;
       });
-
-
     }
   }
 

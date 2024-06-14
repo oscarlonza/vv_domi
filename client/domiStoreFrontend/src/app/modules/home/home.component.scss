@@ -12632,10 +12632,7 @@ nav {
   align-items: center;
   display: flex;
   justify-content: space-between;
-}
-
-.rating.color-ok .star-container .star svg {
-  fill: #ff5900 !important;
+  cursor:pointer;
 }
 
 dialog {

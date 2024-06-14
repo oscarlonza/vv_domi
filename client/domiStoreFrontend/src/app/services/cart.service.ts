@@ -28,7 +28,7 @@ export class CartService {
     }
 
     updateCartTotal(): void {
-        this.cartTotal = this.cart.reduce((a: number, b: any) => a + b.quantity_purchased, 0);
+        this.cartTotal = this.cart?.reduce((a: number, b: any) => a + b.quantity_purchased, 0) || 0;
     }
 
     public addProductToCart(item: any): void {

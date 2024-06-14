@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ElementRef, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -93,3 +93,31 @@ export const orderStatusText: { [key: string]: string } = {
   canceled: 'Cancelado', // Rojo
   rejected: 'Rechazado'  // Gris
 };
+
+export function isScrollNearEnd(el: ElementRef, threshold: number = 120) {
+
+  // height of whole window page
+  const heightOfWholePage = window.document.documentElement.scrollHeight;
+
+  // how big in pixels the element is
+  const heightOfElement = el.nativeElement.scrollHeight;
+
+  // currently scrolled Y position
+  const currentScrolledY = window.scrollY;
+
+  // height of opened window - shrinks if console is opened
+  const innerHeight = window.innerHeight;
+
+  /**
+   * the area between the start of the page and when this element is visible
+   * in the parent component
+   */
+  const spaceOfElementAndPage = heightOfWholePage - heightOfElement;
+
+  // calculated whether we are near the end
+  const scrollToBottom =
+    heightOfElement - innerHeight - currentScrolledY + spaceOfElementAndPage;
+
+  // if the user is near end
+  return scrollToBottom < threshold;
+}
