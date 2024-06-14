@@ -74,9 +74,8 @@
 
                         <!-- Product actions-->
                         <div class="card-footer pt-0 border-top-0 bg-transparent">
-                            <div class="rating">
-                                <star-rating [starType]="'svg'" (starClickChange)="addStar($event.rating, item)"
-                                    [disabled]="!item.voted" [rating]="getRatingValue(item)" [staticColor]="'ok'"
+                            <div class="rating" (click)="openComents(item)">
+                                <star-rating [starType]="'svg'" [rating]="getRatingValue(item)" [staticColor]="'ok'"
                                     [step]="0.5" [showHalfStars]="true"></star-rating>
                                 <div class="d-flex align-content-center">
                                     <mat-icon>summarize</mat-icon><span
@@ -101,4 +100,3 @@
         </div>
     </footer>
 </div>
-

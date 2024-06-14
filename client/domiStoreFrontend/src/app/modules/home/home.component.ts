@@ -8,6 +8,7 @@ import DialogCart from './dialogCart.component';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
 import { isScrollNearEnd } from '../../services/functions.service';
+import DialogComments from './dialogComments.component';
 
 @Component({
   selector: 'app-home',
@@ -84,12 +85,18 @@ export default class HomeComponent {
     });
   }
 
-  goToProductDetail(id: any): void {
-    console.log('id', id);
+  openComents(product:any):void{
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = product;
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+
+    this.dialog.open(DialogComments, dialogConfig);
+
   }
 
-  getRatingValue(product: any): number {
-    return Number(product.rating);
+  goToProductDetail(id: any): void {
+    console.log('id', id);
   }
 
   getDescription(product: any): string {
@@ -97,6 +104,10 @@ export default class HomeComponent {
     if (!description) return '';
     const max: number = 100;
     return description.length > max ? description.substr(0, max) + '...' : description;
+  }
+
+  getRatingValue(product: any): number {
+    return Number(product.rating);
   }
 
   getRatingValueFormatted(product: any): string {
