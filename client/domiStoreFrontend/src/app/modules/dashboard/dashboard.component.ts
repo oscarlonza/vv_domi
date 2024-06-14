@@ -29,11 +29,11 @@ export default class DashboardComponent {
   router = inject(Router);
   rebote = false;
   counter = 0;
-  public auth = inject(AuthService);
-  logout() {
-    sessionStorage.clear()
-    this.router.navigate(['/login']);
+  constructor(public auth:AuthService){
+
   }
+
+
   isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
