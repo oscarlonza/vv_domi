@@ -1,14 +1,10 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Inject, OnInit, ViewChild, inject, signal } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogContent, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { Component, ElementRef, HostListener, Inject, inject, signal } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ProductService } from '../../services/product.service';
 import { SharedModule } from '../shared/shared.module';
 import { NotificationImplService } from '../../services/notification.service';
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableDataSource } from '@angular/material/table';
-import { Dialog } from '@angular/cdk/dialog';
-import { OrderService } from '../../services/order.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import DialogCart from './cart.component';
 
 @Component({
   selector: 'app-home',
@@ -57,15 +53,17 @@ export default class HomeComponent {
     this.authUser = data ? JSON.parse(data) : null;
 
     //Loadind card information
-    const infoCart = this.localStorage?.getItem('cart');
-    this.cart = infoCart ? JSON.parse(infoCart) : [];
-    this.updateCartTotal();
+    this.loadCart();
 
   }
 
-  async getProducts() {
-    console.log(`Pagination >> ${JSON.stringify(this.pagination)}`);
+  loadCart(): void {
+    const infoCart = this.localStorage?.getItem('cart');
+    this.cart = infoCart ? JSON.parse(infoCart) : [];
+    this.updateCartTotal();
+  }
 
+  async getProducts() {
     const result = await this.productService.getProducts(this.pagination);
     if (result.success) {
       const { products, ...paginating } = result.data;
@@ -85,13 +83,16 @@ export default class HomeComponent {
 
   openDialog(): void {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = this.cart;
+    dialogConfig.data = { products: this.cart, user: this.authUser };
+    dialogConfig.data.updateCartEvent = (products: any) => this.updateCart(products);
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
 
     const dialogRef = this.dialog.open(DialogCart, dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
+      this.loadCart();
+
       console.log(`Dialog result: ${result}`);
     });
   }
@@ -133,20 +134,27 @@ export default class HomeComponent {
 
     const products = this.cart.filter((x: any) => x.id === item.id);
     if (products.length === 0) {
-      const { id, name, description, price, quantity_purchased: quantity } = item;
-      const product = { id, name, description, price, quantity };
+      const { ...data } = item;
+      const product = data;
       this.cart.push(product);
     }
     else {
       const product = products[0];
-      product.quantity += item.quantity_purchased;
+      product.quantity_purchased += item.quantity_purchased;
+      product.quantity_purchased = Math.min(product.quantity_purchased, product.quantity);
     }
+
+    this.updateCart(this.cart);
+  }
+
+  public updateCart(products: any[]): void {
     this.localStorage?.setItem('cart', JSON.stringify(this.cart));
+    this.loadCart()
     this.updateCartTotal();
   }
 
   updateCartTotal(): void {
-    this.cartTotal = this.cart.reduce((a: number, b: any) => a + b.quantity, 0);
+    this.cartTotal = this.cart.reduce((a: number, b: any) => a + b.quantity_purchased, 0);
   }
 
   private threshold = 800;
@@ -182,7 +190,6 @@ export default class HomeComponent {
       if (this.pagination.page === this.pagination.totalPages) return;
 
       //this.nearEnd.emit();
-      console.log('Request new page');
       this.pagination.page = this.pagination.page + 1;
       this.pagination.page = Math.min(this.pagination.page, this.pagination.totalPages);
 
@@ -197,72 +204,4 @@ export default class HomeComponent {
     }
   }
 
-}
-
-
-@Component({
-  selector: 'DialogCart',
-  templateUrl: './cart.component.html',
-  styleUrls: ['./home.component.scss', './cart.component.scss'],
-  standalone: true,
-  imports: [SharedModule]
-})
-export class DialogCart implements OnInit {
-  displayedColumns: string[] = ['name', 'quantity', 'price', 'total'];
-  footerColumns: string[] = ['total'];
-  class: string = ""
-  title: string = "Listado de pedidos"
-
-  products: any = [];
-  totalPrice: number = 0;
-  public notificationService = inject(NotificationImplService);
-  constructor(
-    public oriderService: OrderService,
-    public dialogRef: MatDialogRef<DialogCart>,
-    private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-  ) {
-  }
-  ngOnInit() {
-
-    const products = this.data;
-    products.forEach((product: any) => {
-      product.total = product.quantity * product.price;
-      this.totalPrice += product.total;
-    });
-
-    this.products = new MatTableDataSource(products);
-
-  }
-  dialogClose() {
-    this.dialogRef.close('cancel');
-  }
-  async create() {
-    try {
-      //const result = await this.productService.deleteProduct(this.data.id)
-      //if (result.success) {
-      //  this.notificationService.successNotification('Eliminación de productos', result.message);
-      //  await ProductsComponent.changeValueDialog(1);
-      //  this.dialogClose('OK');
-      //} else {
-      //  this.notificationService.errorNotification('Error en la eliminación de producto.');
-      //}
-      //hideSpinner()
-
-      this.notificationService.successNotification("TITLE", "OK");
-    } catch (error) {
-      //hideSpinner()
-      //const message = getErrorMessage(error)
-      this.notificationService.errorNotification("Fail");
-    }
-
-  }
-  openSnackBar(message: string, action: string, type: string) {
-    this.snackBar.open(message, action, {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: type
-    });
-  }
 }
