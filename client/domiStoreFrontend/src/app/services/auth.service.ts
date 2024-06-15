@@ -44,4 +44,20 @@ export class AuthService {
     const result = await this.requestsService.postLikeJSON(`${environment.apiUrl}/auth/register`, params);
     return result;
   }
+  async verifyUser(params: any): Promise<BasicResponse> {
+    const result = await this.requestsService.postLikeJSON(`${environment.apiUrl}/auth/verify`, params);
+    return result;
+  }
+  async resendCode(params: any): Promise<BasicResponse> {
+    const result = await this.requestsService.postLikeJSON(`${environment.apiUrl}/auth/resendcode`, params);
+    return result;
+  }
+  async resetPassword(params: any): Promise<BasicResponse> {
+    const result = await this.requestsService.postLikeJSON(`${environment.apiUrl}/auth/resetpassword`, params);
+    return result;
+  }
+  async changePassword(params: any): Promise<BasicResponse> {
+    const result = await this.requestsService.postLikeJSON(`${environment.apiUrl}/auth/changepassword`, params);
+    return result;
+  }
 }

@@ -1,0 +1,65 @@
+<form class="card mt-3" [formGroup]="useLoginForm ? form : passwordForm">
+    <div *ngIf="action=='new';else other_content">
+        <div class="card-header d-flex align-items-center justify-content-between flex-wrap" style="gap: 1rem;">
+            <div class="d-flex flex-row align-items-baseline gap-2 m-1">
+                <h2 class="m-0 mr-2">
+                    {{title}}
+                </h2>
+                <button (click)="resendCode()" mat-flat-button color="primary" type="button">Reenviar código</button>
+            </div>
+        </div>
+        <div class="card-body row justify-content-center">
+            <mat-form-field appearance="outline" class="col-12 col-md-8">
+                <mat-label>Codigo de verificación</mat-label>
+                <input matInput formControlName="ping" type="text" [maxlength]="500">
+            </mat-form-field>
+        </div>
+    </div>
+    <ng-template #other_content>
+        <div class="card-header d-flex align-items-center justify-content-between flex-wrap" style="gap: 1rem;">
+            <div class="d-flex flex-row align-items-baseline gap-2 m-1">
+                <h2 class="m-0 mr-2">
+                    {{title}}
+                </h2>
+                <p class="title-description">
+                    Por favor, introduce tu cuenta de correo electrónico
+                </p>
+            </div>
+        </div>
+        <div class="card-body row justify-content-center">
+            <mat-form-field appearance="outline" class="col-12 col-md-8">
+                <mat-label>Correo electrónico</mat-label>
+                <input matInput formControlName="email" type="text" [maxlength]="500">
+                <mat-error>Este campo debe ser llenado con un email válido</mat-error>
+                <mat-hint>Ejemplo user&#64;gmail.com</mat-hint>
+            </mat-form-field>
+            <ng-container *ngIf="showPasswordFields">
+                <mat-form-field appearance="outline" class="col-12 col-md-8">
+                    <mat-label>Contraseña actual</mat-label>
+                    <input matInput formControlName="currentPassword" [type]="hideCurrent?'text':'password'">
+                    <button type="button" mat-icon-button matSuffix (click)="hideCurrent = !hideCurrent"
+                        [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideCurrent">
+                        <mat-icon>{{hideCurrent ? 'visibility' : 'visibility_off' }}</mat-icon>
+                    </button>
+                    <mat-hint>La contraseña debe contener 8-15 caracteres</mat-hint>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="col-12 col-md-8">
+                    <mat-label>Contraseña Nueva</mat-label>
+                    <input matInput formControlName="newPassword" [type]="hideNew?'text':'password'">
+                    <button type="button" mat-icon-button matSuffix (click)="hideNew = !hideNew"
+                        [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideNew">
+                        <mat-icon>{{hideNew ? 'visibility' : 'visibility_off' }}</mat-icon>
+                    </button>
+                    <mat-hint>La contraseña debe contener 8-15 caracteres</mat-hint>
+                </mat-form-field>
+            </ng-container>
+        </div>
+    </ng-template>
+
+    <div class="card-footer d-flex align-items-center justify-content-end gap-2">
+        <button style="margin-top: 20px;" mat-flat-button type="button" (click)="dialogClose()">Cancelar</button>
+        <button style="margin-top: 20px;" mat-flat-button color="primary" type="button"
+            (click)="create()">{{actions[action]}}</button>
+
+    </div>
+</form>

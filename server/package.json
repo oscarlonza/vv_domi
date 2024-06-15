@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "** The replication is required replication to execute transactions.",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -30,5 +30,8 @@
     "mocha": "^10.4.0",
     "nodemon": "^3.1.2",
     "supertest": "^7.0.0"
+  },
+  "directories": {
+    "test": "test"
   }
 }
