@@ -23,7 +23,7 @@
         <div class="card-body row justify-content-center">
             <mat-form-field appearance="outline" class="col-12 col-md-6">
                 <mat-label>Cantidad</mat-label>
-                <input matInput formControlName="quantity" type="number">
+                <input matInput formControlName="quantity" type="number" min="1" value="1">
             </mat-form-field>
             <div class="image-upload col-12 col-md-6">
                 <input type="file" (change)="onFileSelected($event)" hidden #fileInput>

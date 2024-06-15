@@ -106,6 +106,7 @@ export class DialogProduct implements OnInit {
   form: FormGroup
   teamData: any = []
   previewUrl: any = null;
+  base64Image: any = null;
   public notificationService = inject(NotificationImplService);
   constructor(
     public productService: ProductService,
@@ -119,7 +120,7 @@ export class DialogProduct implements OnInit {
       name: ["", [Validators.required]],
       description: ["", [Validators.required]],
       price: ["", [Validators.required]],
-      quantity: [0, [Validators.required]]
+      quantity: [1, [Validators.required]]
     });
   }
   ngOnInit() {
@@ -148,11 +149,12 @@ export class DialogProduct implements OnInit {
   }
   async create() {
     showSpinner();
-    //console.log('imagen',this.previewUrl);
     if (this.action == 'new' || this.action == 'edit') {
-      /* if (this.previewUrl){
-        this.form.value.image=this.previewUrl;
-      } */
+      if (this.base64Image) {
+        this.form.value.image = this.base64Image;
+      }else{
+        this.form.value.image = this.previewUrl;
+      }
       if (this.form.valid) {
         if (this.action == 'new') {
           try {
@@ -216,7 +218,10 @@ export class DialogProduct implements OnInit {
       const file = element.files[0];
       const reader = new FileReader();
       reader.onload = () => {
-        this.previewUrl = reader.result as string;
+        const result = reader.result as string;
+        this.base64Image = result.replace(/^data:image\/[a-z]+;base64,/, '');
+        this.previewUrl = result;
+        console.log(this.base64Image);
       };
       reader.readAsDataURL(file);
     } else {
