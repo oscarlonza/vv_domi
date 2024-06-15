@@ -12688,3 +12688,36 @@ dialog {
 .mat-row:hover .mat-cell {
   background-color: rgba($color: #000000, $alpha: 0.05);
 }
+
+
+
+.mobile-label {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-label {
+      /*display: none;*/
+      display: flex;
+      font-weight: bold;
+      margin-right: 2px;
+  }
+
+  .mat-mdc-header-row {
+      display: none !important;
+  }
+
+  table tr {
+      border-radius: var(--mdc-elevated-card-container-shape);
+      background-color: transparent;
+      border-width: 0;
+      border-style: solid;
+      border-color: var(--mdc-elevated-card-container-color);
+      box-shadow: var(--mdc-elevated-card-container-elevation);
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      display: block;
+      height: fit-content;
+  }
+
+}

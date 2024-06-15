@@ -8,7 +8,7 @@
     </div>
 
     <ng-template #other_content>
-        <mat-card #other_content>
+        <mat-card >
             <mat-card-header>
                 <mat-card-title>Lista de productos</mat-card-title>
             </mat-card-header>
@@ -17,7 +17,7 @@
                     <ng-container matColumnDef="name">
                         <th mat-header-cell *matHeaderCellDef>Nombre producto</th>
                         <td mat-cell *matCellDef="let element">
-                            <span class="mobile-label mr-2">Nombre producto:</span>
+                            <span class="mobile-label">Nombre producto:</span>
                             {{ element.name }}
                         </td>
                         <td mat-footer-cell *matFooterCellDef></td>
@@ -25,7 +25,7 @@
                     <ng-container matColumnDef="quantity">
                         <th mat-header-cell *matHeaderCellDef>Cantidad</th>
                         <td mat-cell *matCellDef="let element">
-                            <span class="mobile-label mr-2">Cantidad:</span>
+                            <span class="mobile-label">Cantidad:</span>
                             {{ element.quantity_purchased }}
                         </td>
                         <td mat-footer-cell *matFooterCellDef></td>
@@ -33,7 +33,7 @@
                     <ng-container matColumnDef="price">
                         <th mat-header-cell *matHeaderCellDef>Precio unitario</th>
                         <td mat-cell *matCellDef="let element">
-                            <span class="mobile-label mr-2">Precio unitario:</span>
+                            <span class="mobile-label">Precio unitario:</span>
                             $ {{ element.price }}
                         </td>
                         <td mat-footer-cell *matFooterCellDef>Total venta</td>
@@ -41,10 +41,10 @@
                     <ng-container matColumnDef="total">
                         <th mat-header-cell *matHeaderCellDef>Precio total</th>
                         <td mat-cell *matCellDef="let element">
-                            <span class="mobile-label mr-2">Precio total:</span>
+                            <span class="mobile-label">Precio total:</span>
                             $ {{ element.total }}
                         </td>
-                        <td mat-footer-cell *matFooterCellDef> $ {{totalPrice}} </td>
+                        <td mat-footer-cell *matFooterCellDef class=""> $ {{totalPrice}} </td>
                     </ng-container>
                     <ng-container matColumnDef="actions">
                         <th mat-header-cell *matHeaderCellDef class="pr-3 pl-3">Acciones</th>

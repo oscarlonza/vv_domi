@@ -26,7 +26,7 @@ export const setProductsImageToDefault = async (req, res) => {
 // Obtener los productos paginados
 export const getPaginatedProducts = async (req, res) => {
     try {
-        const { page, limit, filter } = req.query;
+        const { page, limit, filter, order } = req.query;
         const pageNumber = parseInt(page) || 1;
         const limitNumber = parseInt(limit) || 10;
 
@@ -38,6 +38,7 @@ export const getPaginatedProducts = async (req, res) => {
             ],
             quantity: { $gt: 0 }
         };
+        const orderBy = { createdAt: order || 'asc' };
 
         const totalProducts = await Product
             .countDocuments(findParameters);
@@ -46,6 +47,7 @@ export const getPaginatedProducts = async (req, res) => {
 
         const products = await Product
             .find(findParameters)
+            .sort(orderBy)
             .skip((pageNumber - 1) * limitNumber)
             .limit(limitNumber);
 
