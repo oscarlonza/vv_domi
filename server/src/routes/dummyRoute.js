@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { createDummyUsers, createDummyProducts, createDummyOrders, deleteDummyOrders, alterCreateAtOrder, alterStatusOrder } from "../controllers/dummyController.js";
-import validateToken from "../middlewares/validateToken.js";
+import { createDummyUsers, createDummyProducts, createDummyOrders, deleteDummyOrders, alterCreateAtOrder, alterStatusOrder, replaceImageContentProducts } from "../controllers/dummyController.js";
+import { validateToken } from "../middlewares/validateToken.js";
 import { validateUserExits, validateUserIsVerified, validateUserIsAdmin } from "../middlewares/validateUser.js";
 
 const dummyRouter = Router();
@@ -11,5 +11,8 @@ dummyRouter.post('/orders', validateToken, validateUserExits, validateUserIsVeri
 dummyRouter.post('/deleteorders', validateToken, validateUserExits, validateUserIsVerified, validateUserIsAdmin, deleteDummyOrders);
 dummyRouter.post('/altercreateatOrder', validateToken, validateUserExits, validateUserIsVerified, validateUserIsAdmin, alterCreateAtOrder);
 dummyRouter.post('/alterstatusorder', validateToken, validateUserExits, validateUserIsVerified, validateUserIsAdmin, alterStatusOrder);
+dummyRouter.post('/replaceimage', validateToken, validateUserExits, validateUserIsVerified, validateUserIsAdmin, replaceImageContentProducts);
+
+
 
 export default dummyRouter;

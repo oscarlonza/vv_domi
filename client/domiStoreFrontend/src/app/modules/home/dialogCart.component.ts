@@ -66,7 +66,7 @@ export default class DialogCart implements OnInit {
 
       const result = await this.orderService.createOrder(this.products);
       if (result.success) {
-        this.notificationService.successNotification('Registro de orden', "La orden se ha creado correctamente.");
+        this.notificationService.successNotification('Registro de pedido', "El pedido se ha creado correctamente.");
         this.cartService.updateCart([]);
         this.products = [];
         this.dataSource = new MatTableDataSource(this.products);
@@ -78,7 +78,7 @@ export default class DialogCart implements OnInit {
     } catch (error) {
       //hideSpinner()
       //const message = getErrorMessage(error)
-      this.notificationService.errorNotification("Un error ha ocurrido durante la creación de la orden. Por favor, intente de nuevo.");
+      this.notificationService.errorNotification("Un error ha ocurrido durante la creación del pedido. Por favor, intente de nuevo.");
     }
     finally{
       

@@ -36,8 +36,14 @@ export const getPaginatedProducts = async (req, res) => {
                 { name: { $regex: regexValue, $options: 'i' } },
                 { description: { $regex: regexValue, $options: 'i' } }
             ],
-            quantity: { $gt: 0 }
         };
+
+        if (!(req.user && req.user.role && 'superadmin' === req.user.role)) {
+            findParameters.quantity = { $gt: 0 };
+        }
+        
+        console.log(JSON.stringify(findParameters));
+
         const orderBy = { createdAt: order || 'asc' };
 
         const totalProducts = await Product

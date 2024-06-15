@@ -11,6 +11,7 @@ import { isScrollNearEnd } from '../../services/functions.service';
 import DialogComments from './dialogComments.component';
 import MenuComponent  from '../../components/menu/menu.component';
 import DialogOrders from './dialogOrders.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-home',
@@ -36,6 +37,7 @@ export default class HomeComponent {
   public notificationService = inject(NotificationImplService);
   constructor(private dialog: MatDialog,
     public productService: ProductService,
+    private snackBar: MatSnackBar,
     @Inject(DOCUMENT) private document: Document,
     @Inject(AuthService) public authService: AuthService,
     @Inject(CartService) public cartService: CartService,
@@ -161,6 +163,16 @@ export default class HomeComponent {
 
   onAddProduct(item: any): void {
     this.cartService.addProductToCart(item);
+    this.openSnackBar('Producto agregado al carrito', 'Cerrar', 'success');
+  }
+
+  openSnackBar(message: string, action: string, type: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: type
+    });
   }
 
   private threshold = 800;

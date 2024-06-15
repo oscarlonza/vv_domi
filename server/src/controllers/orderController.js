@@ -27,7 +27,7 @@ const validateProduct = async (i, product, session) => {
 export const createOrderTransaction = async (req, products) => {
 
     if (!products || products.length === 0)
-        throw new Error('La orden debe tener productos');
+        throw new Error('El pedido debe tener productos');
 
     const n = products.length;
     let orderSaved = {};
@@ -95,7 +95,7 @@ export const updateOrder = async (req, res) => {
         const orderFound = await Order.findOne(filter);
 
         if (!orderFound)
-            throw new Error('Orden no encontrada');
+            throw new Error('Pedido no encontrado');
 
         const { status: orderStatus } = orderFound;
 
@@ -227,7 +227,7 @@ export const getOrdersPerStatus = async (req, res) => {
                 }
             });
         
-        const enableStatus = OrderStatusEnum.filter(status => status !== 'canceled');
+        const enableStatus = OrderStatusEnum;//.filter(status => status !== 'canceled')
 
         const orderPerStatus = {};
 

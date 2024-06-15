@@ -4,14 +4,14 @@ Las rutas para consumir el controlador de productos
 
 import { Router } from "express";
 import { setProductsImageToDefault, getPaginatedProducts, getProductById, createProduct, updateProduct, deleteProduct, createComment, getPaginatedCommentsByProductId } from "../controllers/productController.js";
-import validateToken from "../middlewares/validateToken.js";
-import { validateUserExits, validateUserIsVerified, validateUserIsAdmin } from "../middlewares/validateUser.js";
+import { validateToken, addToken } from "../middlewares/validateToken.js";
+import { addUser, validateUserExits, validateUserIsVerified, validateUserIsAdmin } from "../middlewares/validateUser.js";
 
 const productRouter = Router();
 
 productRouter.post('/originDefaultimage', setProductsImageToDefault);
 
-productRouter.get('/paginated', getPaginatedProducts);
+productRouter.get('/paginated', addToken, addUser, getPaginatedProducts);
 
 productRouter.get('/:id', getProductById);
 

@@ -162,3 +162,20 @@ export const alterStatusOrder = async (req, res) => {
     }
 
 }
+
+export const replaceImageContentProducts = async (req, res) => {
+    try {
+        const { pattern, replace} = req.body;
+        const products = await Product.find();
+
+        for (const product of products) {
+            product.image = product.image.replace(pattern, replace);
+            await product.save();
+            console.log(`Producto ${product._id} actualizado correctamente`);
+        }
+
+        return res.status(200).json({ message: 'Productos actualizados' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
