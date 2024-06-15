@@ -899,7 +899,7 @@ describe('Pruebas de tienda domi> Post api/', () => {
     });
 
 
-    /*it('Validar registrar pedido fallido--> /api/products', async function () {
+    it('Validar registrar pedido fallido--> /api/products', async function () {
 
         //const req = { email: 'admin@email.com', password: 'admin' };
         const req = { email: 'o.lon.za+domi1@hotmail.com', password: 'Camilo2#.' };
@@ -916,14 +916,14 @@ describe('Pruebas de tienda domi> Post api/', () => {
         const dataProducto = {
             products: [
                 {
-                    id: "666910c2778cbb35bfaae71e",
-                    price: 435,
-                    quantity: 4
+                    id: "666910f5778cbb35bfaaeb07",
+                    price: 33,
+                    quantity: 1
                 },
                 {
                     id: "66691086778cbb35bfaae283",
-                    price: 519,
-                    quantity: 8
+                    price: 3,
+                    quantity: 1
                 }
             ]
         }
@@ -941,7 +941,7 @@ describe('Pruebas de tienda domi> Post api/', () => {
         expect(resSaveProducto.status).to.equal(400);
         const { message } = JSON.parse(resSaveProducto.text);
         expect(message).to.equal("products[0].price: Precio del producto incorrecto");
-    });*/
+    });
 
 
 });
