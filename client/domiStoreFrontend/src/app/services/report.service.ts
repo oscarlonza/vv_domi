@@ -19,4 +19,8 @@ export class ReportService {
     const result = await this.requestsService.get(`${environment.apiUrl}/orders/totalperstatus`, params);
     return result;
   }
+  async resumeOrder(params: any): Promise<BasicResponse> {
+    const result = await this.requestsService.get(`${environment.apiUrl}/orders/resume`, params);
+    return result;
+  }
 }

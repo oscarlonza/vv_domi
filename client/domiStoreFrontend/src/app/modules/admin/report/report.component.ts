@@ -3,7 +3,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { ReportService } from '../../../services/report.service';
 import { NotificationImplService } from '../../../services/notification.service';
-import { getErrorMessage,orderStatusColorsText } from '../../../services/functions.service';
+import { getErrorMessage, orderStatusColorsText, orderStatusText } from '../../../services/functions.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { dateRangeValidator } from '../../../services/functions.service';
 @Component({
@@ -19,13 +19,18 @@ export default class ReportComponent {
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
-  },{ validators: dateRangeValidator });
+  }, { validators: dateRangeValidator });
   range2 = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
-  },{ validators: dateRangeValidator });
+  }, { validators: dateRangeValidator });
+  range3 = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  }, { validators: dateRangeValidator });
   reports: any = []
   reportsTotal: any = {}
+  resume:any=[]
   public notificationService = inject(NotificationImplService);
   selectedTabIndex: number = 0;
   constructor(private report: ReportService) {
@@ -41,25 +46,37 @@ export default class ReportComponent {
       this.applyFilter();
       console.log(value);
     })
+    this.range3.valueChanges.subscribe((value) => {
+      this.applyFilter();
+      console.log(value);
+    })
   }
   async applyFilter() {
     console.log('okkkkkkkkk');
     try {
       if (this.range.value.start && this.range.value.end && this.selectedTabIndex == 0) {
-          const result = await this.report.getTopTen({ from: this.formatDate(this.range.value.start), to: this.formatDate(this.range.value.end) });
-          if (result.success) {
-            this.reports = result.data;
-          } else {
-            this.notificationService.errorNotification('Error en la solicitud');
-          }
-      }else if (this.range2.value.start && this.range2.value.end && this.selectedTabIndex == 1){
-          const result = await this.report.getTotalPerStatus({ from: this.formatDate(this.range2.value.start), to: this.formatDate(this.range2.value.end) });
-          if (result.success) {
-            this.reportsTotal = result.data;
-          } else {
-            this.notificationService.errorNotification('Error en la solicitud');
-          }
-        
+        const result = await this.report.getTopTen({ from: this.formatDate(this.range.value.start), to: this.formatDate(this.range.value.end) });
+        if (result.success) {
+          this.reports = result.data;
+        } else {
+          this.notificationService.errorNotification('Error en la solicitud');
+        }
+      } else if (this.range2.value.start && this.range2.value.end && this.selectedTabIndex == 1) {
+        const result = await this.report.getTotalPerStatus({ from: this.formatDate(this.range2.value.start), to: this.formatDate(this.range2.value.end) });
+        if (result.success) {
+          this.reportsTotal = result.data;
+        } else {
+          this.notificationService.errorNotification('Error en la solicitud');
+        }
+
+      } else if (this.range3.value.start && this.range3.value.end && this.selectedTabIndex == 2) {
+        const result = await this.report.resumeOrder({ from: this.formatDate(this.range3.value.start), to: this.formatDate(this.range3.value.end) });
+        if (result.success) {
+          this.resume = result.data;
+        } else {
+          this.notificationService.errorNotification('Error en la solicitud');
+        }
+
       }
 
     } catch (error) {
@@ -80,5 +97,7 @@ export default class ReportComponent {
   getOrderStatusColor(status: string): string {
     return orderStatusColorsText[status] || '#000000'; // Negro por defecto si no se encuentra el estado
   }
-
+  getOrderStatusText(status: string): string {
+    return orderStatusText[status] || 'Sin estado'; //
+  }
 }
