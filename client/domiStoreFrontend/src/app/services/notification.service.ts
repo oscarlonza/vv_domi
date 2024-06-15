@@ -26,7 +26,7 @@ export class NotificationImplService {
       text,
       icon: 'error',
       confirmButtonText: 'Ok',
-      timer: 2000,
+      timer: 5000,
       timerProgressBar: true,
     });
   }
