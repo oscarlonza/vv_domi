@@ -28,10 +28,12 @@
                     Carrito
                     <span class="badge bg-brand text-white ms-1 mt-1 rounded-pill">{{ cartService.cartTotal }}</span>
                 </button>
+               
                 <button *ngIf="authUser" class="btn btn-outline-brand d-flex items-align-center" type="submit" matTooltip="Cerrar sesión" (click)="logout()">
                     <mat-icon>logout</mat-icon>
                 </button>
             </div>
+            <app-menu></app-menu>
         </div>
     </div>
 </nav>

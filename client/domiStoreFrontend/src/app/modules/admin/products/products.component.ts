@@ -31,7 +31,8 @@ export default class ProductsComponent {
     total: 0,
     limit: 10,
     page: 1,
-    filter: ''
+    filter: '',
+    order:'desc'
   };
   public notificationService = inject(NotificationImplService);
   constructor(private dialog: MatDialog,

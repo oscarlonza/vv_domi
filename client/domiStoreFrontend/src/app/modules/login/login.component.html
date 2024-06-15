@@ -9,7 +9,7 @@
 
                 <form [formGroup]="loginForm">
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Correo electrónico" formControlName="email" />
+                        <input matInput placeholder="Correo electrónico" formControlName="email" autocomplete="off"/>
 
                         @if(loginForm.controls['email'].hasError('required')){
                         <mat-error>El correo eletronico es requerido</mat-error>
@@ -17,7 +17,7 @@
                         }
                     </mat-form-field>
                     <mat-form-field class="full-width">
-                        <input matInput placeholder="Contraseña" [type]="hide?'text':'password'" formControlName="password" />
+                        <input matInput placeholder="Contraseña" [type]="hide?'text':'password'" formControlName="password" autocomplete="off"/>
                         <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                             <mat-icon>{{hide ? 'visibility' : 'visibility_off' }}</mat-icon>
                         </button>
@@ -32,7 +32,7 @@
                     </button>
                     <div class="d-flex flex-column">
                         <span class="register-business">¿Olvidaste tu contraseña? Recuperala <a color="primary" style="cursor: pointer;text-decoration: underline;color: #3f51b5;;"
-                            (click)="openVerify({},'change')">aquí</a></span>
+                            (click)="openVerify({},'reset')">aquí</a></span>
                         <span class="register-business">¿No tienes cuenta? Registrate <a color="primary" style="cursor: pointer;text-decoration: underline;color: #3f51b5;;"
                             (click)="openSignup({},'new')">aquí</a></span>
                     </div>

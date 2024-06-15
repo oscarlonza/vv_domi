@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { AuthService } from '../../services/auth.service';
 import { SharedModule } from '../shared/shared.module';
+import MenuComponent  from '../../components/menu/menu.component';
 
 
 @Component({
@@ -19,7 +20,8 @@ import { SharedModule } from '../shared/shared.module';
     MatIconModule,
     MatButtonModule,
     MatListModule,
-    SharedModule
+    SharedModule,
+    MenuComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

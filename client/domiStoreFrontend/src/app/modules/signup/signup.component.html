@@ -13,11 +13,11 @@
         <div class="card-body row justify-content-center">
             <mat-form-field appearance="outline" class="col-12 col-md-8">
                 <mat-label>Nombre</mat-label>
-                <input matInput formControlName="name" type="text" [maxlength]="500">
+                <input matInput formControlName="name" type="text" [maxlength]="500" autocomplete="off">
             </mat-form-field>
             <mat-form-field appearance="outline" class="col-12 col-md-8">
                 <mat-label>Correo Eectrónico</mat-label>
-                <input matInput formControlName="email" type="text" [maxlength]="500">
+                <input matInput formControlName="email" type="text" [maxlength]="500" autocomplete="off">
                 <mat-error>Este campo debe ser llenado con un email válido</mat-error>
                 <mat-hint>Ejemplo user&#64;gmail.com</mat-hint>
             </mat-form-field>
@@ -25,7 +25,7 @@
         <div class="card-body row justify-content-center">
             <mat-form-field appearance="outline" class="col-12 col-md-8">
                 <mat-label>Contraseña</mat-label>
-                <input matInput formControlName="password" [type]="hide?'text':'password'">
+                <input matInput formControlName="password" [type]="hide?'text':'password'" autocomplete="off">
                 <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                     <mat-icon>{{hide ? 'visibility' : 'visibility_off' }}</mat-icon>
                 </button>
@@ -33,7 +33,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" class="col-12 col-md-8">
                 <mat-label>Dirección</mat-label>
-                <input matInput formControlName="address" type="text" [maxlength]="500">
+                <input matInput formControlName="address" type="text" [maxlength]="500" autocomplete="off">
             </mat-form-field>
         </div>
     </div>

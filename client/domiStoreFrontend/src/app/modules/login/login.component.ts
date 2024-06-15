@@ -26,7 +26,8 @@ import SignupComponent from '../signup/signup.component';
 import { SharedModule } from '../shared/shared.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { getErrorMessage, hideSpinner, showSpinner } from '../../services/functions.service';
-type ActionType = 'new' | 'change';
+import MenuComponent from '../../components/menu/menu.component';
+type ActionType = 'new' | 'change' | 'reset';
 
 @Component({
   selector: 'app-login',
@@ -142,10 +143,13 @@ export default class LoginComponent {
   imports: [SharedModule]  // Asumiendo que usas botones en el diáEscudo
 })
 export class DialogVerify implements OnInit {
-  @ViewChild(LoginComponent) team: LoginComponent | undefined;
+  @ViewChild(LoginComponent) login: LoginComponent | undefined;
+  @ViewChild(MenuComponent) menu: MenuComponent | undefined;
   actions = {
     new: 'Verificar',
-    change: 'Recuperar'
+    change: 'Cambiar',
+    reset: 'Recuperar'
+
   };
   action!: ActionType;
   title: any = null;
@@ -154,7 +158,7 @@ export class DialogVerify implements OnInit {
   showPasswordFields: boolean = false;
   passwordForm: FormGroup
   teamData: any = []
-  emailUser:any=''
+  emailUser: any = ''
   previewUrl: any = null;
   base64Image: any = null;
   hideCurrent = false;
@@ -189,6 +193,13 @@ export class DialogVerify implements OnInit {
         this.title = 'Verificar correo';
         break;
       case 'change':
+        this.title = 'Cambiar contraseña';
+        this.showPasswordFields = true;
+        this.passwordForm.get('email')!.disable();
+        this.passwordForm.get('currentPassword')!.enable();
+        this.passwordForm.get('newPassword')!.enable();
+        break;
+      case 'reset':
         this.title = 'Recuperar contraseña';
         break;
     }
@@ -226,11 +237,8 @@ export class DialogVerify implements OnInit {
             const result = await this.auth.resetPassword({ email: this.passwordForm.value.email })
             if (result.success) {
               this.notificationService.successNotification('Recuperar contraseña', result.message);
-              this.showPasswordFields = true;
-              this.passwordForm.get('currentPassword')!.enable();
-              this.passwordForm.get('newPassword')!.enable();
               //await LoginComponent.changeValueDialog(1);
-              //this.dialogClose();
+              this.dialogClose();
             } else {
               this.notificationService.errorNotification(result.message);
             }
@@ -242,18 +250,13 @@ export class DialogVerify implements OnInit {
           }
         } else {
           try {
-            const resultLogin = await this.auth.login({ email:this.passwordForm.value.email, password: this.passwordForm.value.currentPassword })
-            if (resultLogin.success) {
-              const result = await this.auth.changePassword({ oldPassword: this.passwordForm.value.currentPassword, newPassword: this.passwordForm.value.newPassword })
-              if (result.success) {
-                this.notificationService.successNotification('Recuperar contraseña', result.message);
-                //await LoginComponent.changeValueDialog(1);
-                this.dialogClose();
-              } else {
-                this.notificationService.errorNotification(result.message);
-              }
-            }else{
-              this.notificationService.errorNotification('Por favor, verifique los datos ingresados.');
+            const result = await this.auth.changePassword({ oldPassword: this.passwordForm.value.currentPassword, newPassword: this.passwordForm.value.newPassword })
+            if (result.success) {
+              this.notificationService.successNotification('Cambiar contraseña', result.message);
+              await MenuComponent.changeValueDialog(1);
+              this.dialogClose();
+            } else {
+              this.notificationService.errorNotification(result.message);
             }
             hideSpinner()
           } catch (error) {

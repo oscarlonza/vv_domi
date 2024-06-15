@@ -11,7 +11,7 @@
         <div class="card-body row justify-content-center">
             <mat-form-field appearance="outline" class="col-12 col-md-8">
                 <mat-label>Codigo de verificación</mat-label>
-                <input matInput formControlName="ping" type="text" [maxlength]="500">
+                <input matInput formControlName="ping" type="text" [maxlength]="500" autocomplete="off">
             </mat-form-field>
         </div>
     </div>
@@ -27,16 +27,19 @@
             </div>
         </div>
         <div class="card-body row justify-content-center">
-            <mat-form-field appearance="outline" class="col-12 col-md-8">
-                <mat-label>Correo electrónico</mat-label>
-                <input matInput formControlName="email" type="text" [maxlength]="500">
-                <mat-error>Este campo debe ser llenado con un email válido</mat-error>
-                <mat-hint>Ejemplo user&#64;gmail.com</mat-hint>
-            </mat-form-field>
+            <ng-container *ngIf="!showPasswordFields">
+                <mat-form-field appearance="outline" class="col-12 col-md-8">
+                    <mat-label>Correo electrónico</mat-label>
+                    <input matInput formControlName="email" type="text" [maxlength]="500" autocomplete="off">
+                    <mat-error>Este campo debe ser llenado con un email válido</mat-error>
+                    <mat-hint>Ejemplo user&#64;gmail.com</mat-hint>
+                </mat-form-field>
+            </ng-container>
             <ng-container *ngIf="showPasswordFields">
                 <mat-form-field appearance="outline" class="col-12 col-md-8">
                     <mat-label>Contraseña actual</mat-label>
-                    <input matInput formControlName="currentPassword" [type]="hideCurrent?'text':'password'">
+                    <input matInput formControlName="currentPassword" [type]="hideCurrent?'text':'password'"
+                        autocomplete="off">
                     <button type="button" mat-icon-button matSuffix (click)="hideCurrent = !hideCurrent"
                         [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideCurrent">
                         <mat-icon>{{hideCurrent ? 'visibility' : 'visibility_off' }}</mat-icon>
@@ -45,7 +48,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" class="col-12 col-md-8">
                     <mat-label>Contraseña Nueva</mat-label>
-                    <input matInput formControlName="newPassword" [type]="hideNew?'text':'password'">
+                    <input matInput formControlName="newPassword" [type]="hideNew?'text':'password'" autocomplete="off">
                     <button type="button" mat-icon-button matSuffix (click)="hideNew = !hideNew"
                         [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideNew">
                         <mat-icon>{{hideNew ? 'visibility' : 'visibility_off' }}</mat-icon>

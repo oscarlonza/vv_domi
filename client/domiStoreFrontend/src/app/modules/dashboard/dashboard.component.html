@@ -38,16 +38,12 @@
             </button>
             <span>Domi Store</span>
             <span class="example-spacer"></span>
-            <span>{{auth.user?.name}}</span>
+            <app-menu></app-menu>
 
-            <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-                <mat-icon>face</mat-icon>
-            </button>
-
-            <button (click)="auth.logout()" mat-icon-button class="example-icon"
+            <!--   <button (click)="auth.logout()" mat-icon-button class="example-icon"
                 aria-label="Example icon-button with share icon">
                 <mat-icon>logout</mat-icon>
-            </button>
+            </button> -->
         </mat-toolbar>
         <div class="content">
             <router-outlet></router-outlet>
