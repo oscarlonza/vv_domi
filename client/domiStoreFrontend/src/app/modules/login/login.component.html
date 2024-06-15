@@ -8,7 +8,7 @@
 
 
                 <form [formGroup]="loginForm">
-                    <mat-form-field class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <input matInput placeholder="Correo electrónico" formControlName="email" autocomplete="off"/>
 
                         @if(loginForm.controls['email'].hasError('required')){
@@ -16,7 +16,7 @@
 
                         }
                     </mat-form-field>
-                    <mat-form-field class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <input matInput placeholder="Contraseña" [type]="hide?'text':'password'" formControlName="password" autocomplete="off"/>
                         <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                             <mat-icon>{{hide ? 'visibility' : 'visibility_off' }}</mat-icon>
