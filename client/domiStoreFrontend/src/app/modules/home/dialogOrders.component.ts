@@ -1,12 +1,12 @@
 import { Component, Inject, inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrderService } from '../../services/order.service';
 import { NotificationImplService } from '../../services/notification.service';
 import { SharedModule } from '../shared/shared.module';
 import { MatCardModule } from '@angular/material/card';
-import { CartService } from '../../services/cart.service';
 import { orderStatusColors, orderStatusText } from '../../services/functions.service';
+import DialogQuestion from './dialogQuestion.component';
 
 @Component({
   selector: 'DialogOrders',
@@ -19,14 +19,14 @@ export default class DialogOrders implements OnInit {
   displayedColumns: string[] = ['order', 'client', 'value', 'state', 'actions'];
   class: string = ""
   title: string = "Listado de pedidos"
-
   loading: boolean = false;
 
   dataSource: any = [];
 
   public notificationService = inject(NotificationImplService);
-
   constructor(
+    private dialog: MatDialog,
+    notificationService: NotificationImplService,
     public orderService: OrderService,
     public dialogRef: MatDialogRef<DialogOrders>
   ) {
@@ -46,7 +46,7 @@ export default class DialogOrders implements OnInit {
       this.notificationService.errorNotification('Error en la solicitud');
       this.dataSource = new MatTableDataSource([]);
     }
-    
+
     this.loading = false;
   }
 
@@ -55,33 +55,28 @@ export default class DialogOrders implements OnInit {
   }
 
   openDialogOrder(order: any, status: string) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      title: 'Cambio de estado',
+      description: '¿Está seguro de cambiar el estado del pedido?',
+      cancelText: 'No',
+      yesText: 'Sí',
+      obj: { status, order },
+    }
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    const dialogRef = this.dialog.open(DialogQuestion, dialogConfig);
 
-    console.log(`Open dialog >> ${JSON.stringify({ order, status })}`);
+    dialogRef.afterClosed().subscribe(async (result: any) => {
 
+      const { action, obj } = result;
+
+      if ('Sí' === action) {
+        await this.setOrderStatus(obj.status, obj.order);
+      }
+    });
   }
-  /*
-    openDialogOrder(data: any, action: any) {
-      const dialogConfig = new MatDialogConfig();
-      data.action = action;
-      dialogConfig.data = data;
-      dialogConfig.disableClose = false;
-      dialogConfig.autoFocus = true;
-      dialogConfig.width = '57%';
-      dialogConfig.height = "fit-content";
-      const dialogRef = this.dialog.open(DialogOrder, dialogConfig);
-  
-      dialogRef.afterClosed().subscribe((result: any) => {
-        if (OrdersComponent.switch == 1) {
-          this.ngOnInit();
-        }
-        OrdersComponent.switch = 0;
-      });
-    }
-    static changeValueDialog(value: any) {
-      this.switch = value
-  
-    }
-    */
+
   getOrderStatusColor(status: string): string {
     return orderStatusColors[status] || '#000000'; // Negro por defecto si no se encuentra el estado
   }
@@ -89,20 +84,18 @@ export default class DialogOrders implements OnInit {
     return orderStatusText[status] || 'Sin estado'; //
   }
 
-  setOrderStaus(status: string) {
+  async setOrderStatus(status: string, order: any) {
     try {
       this.loading = true;
 
-      /*const result = await this.orderService.createOrder(this.products);
+      console.log("OK Change estatus");
+      const result = await this.orderService.changeStatusOrder({ status }, order.id);
       if (result.success) {
-        this.notificationService.successNotification('Registro de pedido', "El pedido se ha creado correctamente.");
-        this.cartService.updateCart([]);
-        this.products = [];
-        this.dataSource = new MatTableDataSource(this.products);
-        this.dialogRef.close('OK');
+        order.status = status;
+        this.notificationService.successNotification('Registro de pedido', "El estado se ha cambiado satisfactoriamente.");
       } else {
         this.notificationService.errorNotification(result.message);
-      }*/
+      }
 
     } catch (error) {
       //hideSpinner()
