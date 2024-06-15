@@ -47,7 +47,7 @@ export default class ProductsComponent {
     //console.log('result', result);
     if (result.success) {
       this.dataSource = new MatTableDataSource(result.data.products);
-      this.dataParams.total = result.data.products.length;
+      this.dataParams.total = result.data.totalProducts;
     } else {
       this.notificationService.errorNotification('Error en la solicitud');
       this.dataSource = new MatTableDataSource([]);
@@ -61,7 +61,7 @@ export default class ProductsComponent {
     //this.dataSource.filter = filtro.trim().toLowerCase();
   }
   handlePage(e: PageEvent) {
-    this.dataParams.size = e.pageSize;
+    this.dataParams.limit = e.pageSize;
     this.dataParams.page = e.pageIndex + 1;
     this.getProducts();
   }
