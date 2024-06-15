@@ -47,16 +47,21 @@ export default class OrdersComponent {
     this.dataSource.paginator = this.paginator;
   }
   async getOrders() {
-    const result = await this.orderService.getOrders();
-    if (result.success) {
-      this.dataSource = new MatTableDataSource(result.data);
-      this.dataSource.paginator = this.paginator;
-      this.dataParams.total = result.data.length;
-    } else {
-      this.notificationService.errorNotification('Error en la solicitud');
-      this.dataSource = new MatTableDataSource([]);
-      this.dataSource.paginator = this.paginator;
-      this.dataParams.total = 0;
+    try {
+      const result = await this.orderService.getOrders();
+      if (result.success) {
+        this.dataSource = new MatTableDataSource(result.data);
+        this.dataSource.paginator = this.paginator;
+        this.dataParams.total = result.data.length;
+      } else {
+        this.notificationService.errorNotification('Error en la solicitud');
+        this.dataSource = new MatTableDataSource([]);
+        this.dataSource.paginator = this.paginator;
+        this.dataParams.total = 0;
+      }
+    } catch (error) {
+      const message = getErrorMessage(error)
+      this.notificationService.errorNotification(message)
     }
   }
 
