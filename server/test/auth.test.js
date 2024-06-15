@@ -259,7 +259,7 @@ describe('Pruebas de tienda domi> Post api/', () => {
         expect(message).to.equal("El correo electrónico no existe");
     });
 
-    /*it('Validar reenviar codigo exitoso --> /api/resendcode', async function () {
+    it('Validar reenviar codigo exitoso --> /api/resendcode', async function () {
 
         const req = { email: 'o.lon.za+domi1@hotmail.com', password: 'Camilo2#.' };
 
@@ -281,7 +281,7 @@ describe('Pruebas de tienda domi> Post api/', () => {
         const { message } = JSON.parse(resRenviar.text);
         expect(message).to.equal("Usuario verificado");
             
-    });*/
+    });
 
     it('Validar reenviar codigo fallido sin token--> /resendcode', async function () {
 
@@ -787,7 +787,29 @@ describe('Pruebas de tienda domi> Post api/', () => {
 
     });
 
-    /*it('Eliminar producto --> /api/products/:id', async function () {
+    /*it('Eliminar producto  producto exitosamente --> /api/products/:id', async function () {
+
+        const req = { email: 'admin@email.com', password: 'admin' };
+
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send(req);
+
+        expect(res.status).to.equal(200);
+
+        const cookie = res.headers["set-cookie"];
+
+        const deleteProduct = await request(app)
+            .delete('/api/products/6669110b778cbb35bfaaeccd')
+            .set('Cookie', cookie)
+
+        expect(deleteProduct.status).to.equal(200);
+        const { message } = JSON.parse(deleteProduct.text);
+        //expect(message).to.equal("Producto no encontrado");
+
+    });*/
+
+    it('Eliminar producto  producto no existe--> /api/products/:id', async function () {
 
         const req = { email: 'admin@email.com', password: 'admin' };
 
@@ -803,10 +825,36 @@ describe('Pruebas de tienda domi> Post api/', () => {
             .delete('/api/products/6664779e097ebd3b86c32fc1')
             .set('Cookie', cookie)
 
-        expect(deleteProduct.status).to.equal(200);
+        expect(deleteProduct.status).to.equal(404);
         const { message } = JSON.parse(deleteProduct.text);
-        expect(message).to.equal("Producto eliminado correctamente");
+        expect(message).to.equal("Producto no encontrado");
+
+    });
+
+    /*it('Validar buscar producto exitosamente --> /api/products/:id', async function () {
+
+        const req = { email: 'admin@email.com', password: 'admin' };
+
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send(req);
+
+        expect(res.status).to.equal(200);
+
+        const cookie = res.headers["set-cookie"];
+
+        const deleteProduct = await request(app)
+            .delete('/api/products/6669103c778cbb35bfaadcc6')
+            .set('Cookie', cookie)
+
+        expect(deleteProduct.status).to.equal(200);
+        //const { message } = JSON.parse(deleteProduct.text);
+        //expect(message).to.equal("Producto no encontrado");
 
     });*/
+
+    
+
+
 
 });
