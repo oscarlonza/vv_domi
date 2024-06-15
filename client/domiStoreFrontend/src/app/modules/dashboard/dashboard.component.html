@@ -6,6 +6,12 @@
 
         <mat-list role="list" class="my-list-container">
             <h2>Menu</h2>
+            <mat-list-item role="listitem" routerLinkActive="active" routerLink="report">
+                <mat-icon matListItemIcon [ngClass]="{'active-text-color': isActive('report')}">summarize</mat-icon>
+
+                <div matListItemTitle [ngClass]="{'active-text-color': isActive('report')}">Informes</div>
+                <div matListItemLine [ngClass]="{'active-text-color': isActive('report')}">Gestión de informes</div>
+            </mat-list-item>
             <mat-list-item role="listitem" routerLinkActive="active" routerLink="product">
                 <mat-icon matListItemIcon [ngClass]="{'active-text-color': isActive('product')}">inventory</mat-icon>
 

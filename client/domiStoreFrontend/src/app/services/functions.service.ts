@@ -7,6 +7,7 @@ import {
   isNotEmptyObject,
   isString,
 } from 'class-validator';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 
 export function getDomain(): string {
   return environment.apiUrl;
@@ -85,6 +86,14 @@ export const orderStatusColors: { [key: string]: string } = {
   canceled: '1px solid #F44336', // Rojo
   rejected: '1px solid #9E9E9E'  // Gris
 };
+export const orderStatusColorsText: { [key: string]: string } = {
+  created: '#2196F3', // Azul
+  preparing: '#FFC107', // Amarillo
+  delivered: '#4CAF50', // Verde
+  received:  '#8BC34A', // Verde Claro
+  canceled:  '#F44336', // Rojo
+  rejected:  '#9E9E9E'  // Gris
+};
 export const orderStatusText: { [key: string]: string } = {
   created: 'Creado', // Azul
   preparing: 'Preparando', // Amarillo
@@ -92,6 +101,11 @@ export const orderStatusText: { [key: string]: string } = {
   received: 'Recibido', // Verde Claro
   canceled: 'Cancelado', // Rojo
   rejected: 'Rechazado'  // Gris
+};
+export const dateRangeValidator: ValidatorFn = (control: AbstractControl): { [key: string]: any } | null => {
+  const start = control.get('start')?.value;
+  const end = control.get('end')?.value;
+  return start && end && start > end ? { 'dateRange': true } : null;
 };
 
 export function isScrollNearEnd(el: ElementRef, threshold: number = 120) {

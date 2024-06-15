@@ -32,7 +32,7 @@ export default class ProductsComponent {
     limit: 10,
     page: 1,
     filter: '',
-    order:'desc'
+    order: 'desc'
   };
   public notificationService = inject(NotificationImplService);
   constructor(private dialog: MatDialog,
@@ -43,16 +43,21 @@ export default class ProductsComponent {
     await this.getProducts();
   }
   async getProducts() {
-    const result = await this.productService.getProducts(this.dataParams);
-    console.log(environment.accessToken);
-    //console.log('result', result);
-    if (result.success) {
-      this.dataSource = new MatTableDataSource(result.data.products);
-      this.dataParams.total = result.data.totalProducts;
-    } else {
-      this.notificationService.errorNotification('Error en la solicitud');
-      this.dataSource = new MatTableDataSource([]);
-      this.dataParams.total = 0;
+    try {
+      const result = await this.productService.getProducts(this.dataParams);
+      console.log(environment.accessToken);
+      //console.log('result', result);
+      if (result.success) {
+        this.dataSource = new MatTableDataSource(result.data.products);
+        this.dataParams.total = result.data.totalProducts;
+      } else {
+        this.notificationService.errorNotification('Error en la solicitud');
+        this.dataSource = new MatTableDataSource([]);
+        this.dataParams.total = 0;
+      }
+    } catch (error) {
+      const message = getErrorMessage(error)
+      this.notificationService.errorNotification(message)
     }
   }
   applyFilter(event: Event) {
@@ -153,7 +158,7 @@ export class DialogProduct implements OnInit {
     if (this.action == 'new' || this.action == 'edit') {
       if (this.base64Image) {
         this.form.value.image = this.base64Image;
-      }else{
+      } else {
         this.form.value.image = this.previewUrl;
       }
       if (this.form.valid) {

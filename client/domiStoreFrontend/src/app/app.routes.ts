@@ -19,8 +19,12 @@ export const routes: Routes = [
                 loadComponent: () => import('./modules/admin/orders/orders.component')
             },
             {
+                path: 'report',
+                loadComponent: () => import('./modules/admin/report/report.component')
+            },
+            {
                 path: '**',
-                redirectTo: 'product',
+                redirectTo: 'report',
             }
         ]
     },
