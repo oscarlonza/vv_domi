@@ -1,5 +1,15 @@
 import { User } from '../models/user.js';
 
+export const addUser = async (req, res, next) => {
+
+    if (!req.user) {
+        next();
+        return;
+    }
+
+    validateUserExits(req, res, next);
+}
+
 export const validateUserExits = async (req, res, next) => {
     const { id } = req.user;
     const userFound = await User.findById(id);
@@ -13,7 +23,7 @@ export const validateUserExits = async (req, res, next) => {
         address: userFound.address,
         is_verified: userFound.is_verified,
         role: userFound.role,
-        verification_code : userFound.verification_code
+        verification_code: userFound.verification_code
     }
 
     req.user = user;
@@ -32,7 +42,7 @@ export const validateUserIsVerified = async (req, res, next) => {
 
 export const validateUserIsNotVerified = async (req, res, next) => {
     const { is_verified } = req.user;
-    
+
     if (is_verified)
         return res.status(404).json({ message: 'Usuario verificado' });
 

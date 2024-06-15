@@ -1,10 +1,10 @@
 /*
-Las rutas para consumir el controlador de ordenes
+Las rutas para consumir el controlador de pedidos
 */
 
 import { Router } from "express";
 import { createOrder, getOrders, updateOrder, getPaginatedProductsPurchasedByUser, getOrdersBetweenDates, getTopTenProducts, getOrdersPerStatus } from "../controllers/orderController.js";
-import validateToken from "../middlewares/validateToken.js";
+import { validateToken } from "../middlewares/validateToken.js";
 import { validateUserExits, validateUserIsVerified, validateUserIsAdmin } from "../middlewares/validateUser.js";
 
 const orderRouter = Router();

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { register, login, logout, profile, verify, resendcode, changePassword, resetPassword } from "../controllers/authController.js";
-import validateToken from "../middlewares/validateToken.js";
-import {validateUserExits, validateUserIsVerified, validateEmailDoesntExists, validateEmailAlreadyExists, validateUserIsNotVerified} from "../middlewares/validateUser.js";
+import { validateToken } from "../middlewares/validateToken.js";
+import { validateUserExits, validateUserIsVerified, validateEmailDoesntExists, validateEmailAlreadyExists, validateUserIsNotVerified } from "../middlewares/validateUser.js";
 
 const router = Router();
 

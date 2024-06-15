@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
 config();
 
-const validateToken = (req, res, next) => {
+export const validateToken = (req, res, next) => {
     const { token } = req.cookies;
     const KEY = process.env.TOKEN_SECRET;
     if (!token)
@@ -17,4 +17,12 @@ const validateToken = (req, res, next) => {
     );
 }
 
-export default validateToken;
+export const addToken = (req, res, next) => {
+    const { token } = req.cookies;
+    
+    if (!token) {
+        next();
+        return;
+    }
+    validateToken(req, res, next);
+}
