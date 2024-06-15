@@ -9,11 +9,11 @@ import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
 import { isScrollNearEnd } from '../../services/functions.service';
 import DialogComments from './dialogComments.component';
-
+import MenuComponent  from '../../components/menu/menu.component';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [SharedModule, CommonModule],
+  imports: [SharedModule, CommonModule,MenuComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
