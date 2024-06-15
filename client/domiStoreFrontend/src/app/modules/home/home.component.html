@@ -8,8 +8,7 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
 
             <div class="d-flex align-items-center">
-                <h5 *ngIf="authUser" class="d-flex items-align-center m-0 me-2"><mat-icon class="me-1">person</mat-icon>{{getUserName()}}</h5>
-                <a *ngIf="!authUser" href="/login" class="btn btn-brand me-2 d-flex items-align-center">
+                <a *ngIf="!authUser?.user" href="/login" class="btn btn-brand me-2 d-flex items-align-center">
                     <mat-icon class="me-1">person</mat-icon>
                     Iniciar sesión
                 </a>
@@ -18,7 +17,7 @@
                     <mat-icon class="me-1">shopping_bag</mat-icon>
                     Mis pedidos
                 </a>
-                <button *ngIf="authUser&&!isAuthUserAdmin()" (click)="openDialogOrders()"
+                <button *ngIf="authUser?.user&&!isAuthUserAdmin()" (click)="openDialogOrders()"
                     class="btn btn-brand me-2 d-flex items-align-center">
                     <mat-icon class="me-1">shopping_bag</mat-icon>
                     Mis pedidos
@@ -29,11 +28,9 @@
                     <span class="badge bg-brand text-white ms-1 mt-1 rounded-pill">{{ cartService.cartTotal }}</span>
                 </button>
                
-                <button *ngIf="authUser" class="btn btn-outline-brand d-flex items-align-center" type="submit" matTooltip="Cerrar sesión" (click)="logout()">
-                    <mat-icon>logout</mat-icon>
-                </button>
+                <app-menu *ngIf="authUser?.user"></app-menu>
             </div>
-            <app-menu></app-menu>
+            
         </div>
     </div>
 </nav>

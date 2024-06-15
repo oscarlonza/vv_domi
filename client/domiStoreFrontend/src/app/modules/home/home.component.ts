@@ -32,19 +32,16 @@ export default class HomeComponent {
   };
 
 
-  authUser: any = null;
-
   public notificationService = inject(NotificationImplService);
   constructor(private dialog: MatDialog,
     public productService: ProductService,
     private snackBar: MatSnackBar,
     @Inject(DOCUMENT) private document: Document,
-    @Inject(AuthService) public authService: AuthService,
+    @Inject(AuthService) public authUser: AuthService,
     @Inject(CartService) public cartService: CartService,
     private el: ElementRef,
 
   ) {
-    this.authUser = this.authService.user;
   }
 
   async ngOnInit() {
@@ -57,7 +54,7 @@ export default class HomeComponent {
   }
 
   async logout() {
-    await this.authService.logout();
+    await this.authUser.logout();
     window.location.reload();
   }
 
@@ -80,16 +77,16 @@ export default class HomeComponent {
   }
 
   isAuthUserAdmin(): boolean {
-    return 'superadmin' === this.authUser?.role;
+    return 'superadmin' === this.authUser?.user?.role;
   }
 
   getUserName() {
-    return this.authUser?.name || '';
+    return this.authUser?.user?.name || '';
   }
 
   openDialog(): void {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = { user: this.authUser };
+    dialogConfig.data = { user: this.authUser?.user };
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
 
