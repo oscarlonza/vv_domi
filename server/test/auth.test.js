@@ -280,7 +280,7 @@ describe('Pruebas de tienda domi> Post api/', () => {
         expect(resRenviar.status).to.equal(404);
         const { message } = JSON.parse(resRenviar.text);
         expect(message).to.equal("Usuario verificado");
-            
+
     });
 
     it('Validar reenviar codigo fallido sin token--> /resendcode', async function () {
@@ -822,7 +822,7 @@ describe('Pruebas de tienda domi> Post api/', () => {
         const cookie = res.headers["set-cookie"];
 
         const deleteProduct = await request(app)
-            .delete('/api/products/6664779e097ebd3b86c32fc1')
+            .delete('/api/products/6669110b778cbb35bfaaeccd')
             .set('Cookie', cookie)
 
         expect(deleteProduct.status).to.equal(404);
@@ -844,7 +844,7 @@ describe('Pruebas de tienda domi> Post api/', () => {
         const cookie = res.headers["set-cookie"];
 
         const deleteProduct = await request(app)
-            .delete('/api/products/6669103c778cbb35bfaadcc6')
+            .get('/api/products/6669103c778cbb35bfaadcc6')
             .set('Cookie', cookie)
 
         expect(deleteProduct.status).to.equal(200);
@@ -853,8 +853,126 @@ describe('Pruebas de tienda domi> Post api/', () => {
 
     });*/
 
-    
 
+    it('Validar registrar pedido exitosamente--> /api/products', async function () {
+
+        //const req = { email: 'admin@email.com', password: 'admin' };
+        const req = { email: 'o.lon.za+domi1@hotmail.com', password: 'Camilo2#.' };
+
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send(req);
+
+        //console.log(`Response ${JSON.stringify(res)}`);
+        expect(res.status).to.equal(200);
+
+        const cookie = res.headers["set-cookie"];
+
+        const dataProducto = {
+            products: [
+                {
+                    id: "666910f5778cbb35bfaaeb07",
+                    price: 242,
+                    quantity: 1
+                },
+                {
+                    id: "66691086778cbb35bfaae283",
+                    price: 84,
+                    quantity: 1
+                }
+            ]
+        }
+
+
+        //console.log(`Cookie >> ${cookie}`);
+
+        const resSaveProducto = await request(app)
+            .post('/api/orders')
+            .set('Cookie', cookie)
+            .send(dataProducto);
+
+        //console.log(JSON.stringify(resSaveProducto));
+
+        expect(resSaveProducto.status).to.equal(201);
+        const { message } = JSON.parse(resSaveProducto.text);
+        //expect(message).to.equal("products[0].price: Precio del producto incorrecto");
+    });
+
+
+    it('Validar registrar pedido fallido--> /api/products', async function () {
+
+        //const req = { email: 'admin@email.com', password: 'admin' };
+        const req = { email: 'o.lon.za+domi1@hotmail.com', password: 'Camilo2#.' };
+
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send(req);
+
+        //console.log(`Response ${JSON.stringify(res)}`);
+        expect(res.status).to.equal(200);
+
+        const cookie = res.headers["set-cookie"];
+
+        const dataProducto = {
+            products: [
+                {
+                    id: "666910f5778cbb35bfaaeb07",
+                    price: 33,
+                    quantity: 1
+                },
+                {
+                    id: "66691086778cbb35bfaae283",
+                    price: 3,
+                    quantity: 1
+                }
+            ]
+        }
+
+
+        //console.log(`Cookie >> ${cookie}`);
+
+        const resSaveProducto = await request(app)
+            .post('/api/orders')
+            .set('Cookie', cookie)
+            .send(dataProducto);
+
+        //console.log(JSON.stringify(resSaveProducto));
+
+        expect(resSaveProducto.status).to.equal(400);
+        const { message } = JSON.parse(resSaveProducto.text);
+        expect(message).to.equal("products[0].price: Precio del producto incorrecto");
+    });
+
+    it('Validar listar pedidos exitosamente --> /api/orders', async function () {
+
+        //const req = { email: 'admin@email.com', password: 'admin' };
+        const req = { email: 'o.lon.za+domi1@hotmail.com', password: 'Camilo2#.' };
+
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send(req);
+
+        //console.log(`Response ${JSON.stringify(res)}`);
+        expect(res.status).to.equal(200);
+
+        const cookie = res.headers["set-cookie"];
+
+        const dataProducto = {  };
+
+
+        //console.log(`Cookie >> ${cookie}`);
+
+        const resSaveProducto = await request(app)
+            .get('/api/orders')
+            .set('Cookie', cookie)
+            .send(dataProducto);
+
+        //console.log(JSON.stringify(resSaveProducto));
+
+        expect(resSaveProducto.status).to.equal(200);
+        const { message } = JSON.parse(resSaveProducto.text);
+        //expect(message).to.equal("products[0].price: Precio del producto incorrecto");
+    });
 
 
 });
