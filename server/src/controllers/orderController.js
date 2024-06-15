@@ -227,7 +227,7 @@ export const getOrdersPerStatus = async (req, res) => {
                 }
             });
         
-        const enableStatus = OrderStatusEnum.filter(status => status !== 'canceled');
+        const enableStatus = OrderStatusEnum;//.filter(status => status !== 'canceled')
 
         const orderPerStatus = {};
 
