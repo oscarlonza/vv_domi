@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    apiUrl: 'http://localhost:8012/api',
-    accessToken: 'XXXX'
+    apiUrl: 'http://13.82.208.127:8080/api',
+    accessToken: ''
 };
