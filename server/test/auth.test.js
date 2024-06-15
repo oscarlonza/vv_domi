@@ -943,5 +943,36 @@ describe('Pruebas de tienda domi> Post api/', () => {
         expect(message).to.equal("products[0].price: Precio del producto incorrecto");
     });
 
+    it('Validar listar pedidos exitosamente --> /api/orders', async function () {
+
+        //const req = { email: 'admin@email.com', password: 'admin' };
+        const req = { email: 'o.lon.za+domi1@hotmail.com', password: 'Camilo2#.' };
+
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send(req);
+
+        //console.log(`Response ${JSON.stringify(res)}`);
+        expect(res.status).to.equal(200);
+
+        const cookie = res.headers["set-cookie"];
+
+        const dataProducto = {  };
+
+
+        //console.log(`Cookie >> ${cookie}`);
+
+        const resSaveProducto = await request(app)
+            .get('/api/orders')
+            .set('Cookie', cookie)
+            .send(dataProducto);
+
+        //console.log(JSON.stringify(resSaveProducto));
+
+        expect(resSaveProducto.status).to.equal(200);
+        const { message } = JSON.parse(resSaveProducto.text);
+        //expect(message).to.equal("products[0].price: Precio del producto incorrecto");
+    });
+
 
 });
