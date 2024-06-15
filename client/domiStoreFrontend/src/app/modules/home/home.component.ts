@@ -10,6 +10,8 @@ import { CartService } from '../../services/cart.service';
 import { isScrollNearEnd } from '../../services/functions.service';
 import DialogComments from './dialogComments.component';
 import MenuComponent  from '../../components/menu/menu.component';
+import DialogOrders from './dialogOrders.component';
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -52,6 +54,11 @@ export default class HomeComponent {
 
   }
 
+  async logout() {
+    await this.authService.logout();
+    window.location.reload();
+  }
+
   async getProducts() {
     const result = await this.productService.getProducts(this.pagination);
     if (result.success) {
@@ -70,6 +77,14 @@ export default class HomeComponent {
     }
   }
 
+  isAuthUserAdmin(): boolean {
+    return 'superadmin' === this.authUser?.role;
+  }
+
+  getUserName() {
+    return this.authUser?.name || '';
+  }
+
   openDialog(): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = { user: this.authUser };
@@ -85,7 +100,22 @@ export default class HomeComponent {
     });
   }
 
-  openComents(product:any):void{
+  openDialogOrders(): void {
+
+    console.log('Open Orders dialog ');
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.minWidth = '260px';
+
+    const dialogRef = this.dialog.open(DialogOrders, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
+
+  openComents(product: any): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = product;
     dialogConfig.disableClose = false;
@@ -133,7 +163,7 @@ export default class HomeComponent {
     this.cartService.addProductToCart(item);
   }
 
-  private threshold = 800;  
+  private threshold = 800;
   private defaultValue = 30;
   private limitSignal = signal<number>(this.defaultValue);
 
