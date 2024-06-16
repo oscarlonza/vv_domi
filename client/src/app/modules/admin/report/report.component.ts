@@ -6,10 +6,13 @@ import { NotificationImplService } from '../../../services/notification.service'
 import { getErrorMessage, orderStatusColorsText, orderStatusText } from '../../../services/functions.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { dateRangeValidator } from '../../../services/functions.service';
+import { MatCardModule } from '@angular/material/card';
+import {MatAccordion, MatExpansionModule} from '@angular/material/expansion';
+
 @Component({
   selector: 'app-report',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule,MatCardModule, MatExpansionModule],
   templateUrl: './report.component.html',
   styleUrl: './report.component.scss'
 })
@@ -17,14 +20,6 @@ export default class ReportComponent {
   dateStart = "";
   dateEnd = "";
   range = new FormGroup({
-    start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null),
-  }, { validators: dateRangeValidator });
-  range2 = new FormGroup({
-    start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null),
-  }, { validators: dateRangeValidator });
-  range3 = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   }, { validators: dateRangeValidator });
@@ -37,46 +32,38 @@ export default class ReportComponent {
 
   }
   async ngOnInit() {
-    //await this.loadInitialDates();
+    
     this.range.valueChanges.subscribe((value) => {
-      this.applyFilter();
-      console.log(value);
-    })
-    this.range2.valueChanges.subscribe((value) => {
-      this.applyFilter();
-      console.log(value);
-    })
-    this.range3.valueChanges.subscribe((value) => {
       this.applyFilter();
       console.log(value);
     })
   }
   async applyFilter() {
-    console.log('okkkkkkkkk');
     try {
       if (this.range.value.start && this.range.value.end && this.selectedTabIndex == 0) {
-        const result = await this.report.getTopTen({ from: this.formatDate(this.range.value.start), to: this.formatDate(this.range.value.end) });
+
+        const filter = { from: this.formatDate(this.range.value.start), to: this.formatDate(this.range.value.end) };
+
+        const result = await this.report.getTopTen(filter);
         if (result.success) {
           this.reports = result.data;
         } else {
           this.notificationService.errorNotification('Error en la solicitud');
         }
-      } else if (this.range2.value.start && this.range2.value.end && this.selectedTabIndex == 1) {
-        const result = await this.report.getTotalPerStatus({ from: this.formatDate(this.range2.value.start), to: this.formatDate(this.range2.value.end) });
-        if (result.success) {
-          this.reportsTotal = result.data;
+
+        const resultTotals = await this.report.getTotalPerStatus(filter);
+        if (resultTotals.success) {
+          this.reportsTotal = resultTotals.data;
         } else {
           this.notificationService.errorNotification('Error en la solicitud');
         }
 
-      } else if (this.range3.value.start && this.range3.value.end && this.selectedTabIndex == 2) {
-        const result = await this.report.resumeOrder({ from: this.formatDate(this.range3.value.start), to: this.formatDate(this.range3.value.end) });
-        if (result.success) {
-          this.resume = result.data;
+        const resultResume = await this.report.resumeOrder(filter);
+        if (resultResume.success) {
+          this.resume = resultResume.data;
         } else {
           this.notificationService.errorNotification('Error en la solicitud');
         }
-
       }
 
     } catch (error) {

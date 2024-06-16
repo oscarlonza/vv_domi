@@ -1,3 +1,22 @@
+.card {
+    border: none;
+    overflow-x: hidden;
+    padding: 20px;
+    border-radius: 16px;
+
+    .card-header {
+        background-color: #fff;
+    }
+    .card-footer {
+        display: flex;
+        flex-direction: row;
+        flex-flow: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        background-color: #fff;
+    }
+}
+
 .card1{
     width: 250px;
     background-color: #ffffff;
