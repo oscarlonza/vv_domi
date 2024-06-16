@@ -215,6 +215,16 @@ export const replaceImageContentProducts = async (req, res) => {
             console.log(`Producto ${product._id} actualizado correctamente`);
         }
 
+        const orders = await Order.find();
+
+        for(const order of orders){
+            for(const product of order.products){
+                product.image = product.image.replace(pattern, replace);
+            }
+            await order.save();
+            console.log(`Orden ${order._id} actualizada correctamente`);
+        }
+
         return res.status(200).json({ message: 'Productos actualizados' });
     } catch (error) {
         return res.status(500).json({ message: error.message });
