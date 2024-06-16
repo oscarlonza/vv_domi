@@ -6,7 +6,8 @@
         <mat-card-header>
             <mat-card-title-group>
                 <mat-card-title>{{product?.name}}</mat-card-title>
-                <mat-card-subtitle>$ {{product.price}}</mat-card-subtitle>
+                <mat-card-subtitle>{{product.price  | currency:  '$ ' : 'symbol' : '1.0-0'}}</mat-card-subtitle>
+                
                 <img class="ms-2" height="80" width="auto" src="{{product.image}}" alt="{{product.name}}">
             </mat-card-title-group>
         </mat-card-header>

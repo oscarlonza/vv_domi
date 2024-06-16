@@ -8,7 +8,6 @@ import { createOrderTransaction, rejectOrCancelOrderTransaction } from './orderC
 import bcrypt from 'bcryptjs';
 import { faker } from '@faker-js/faker';
 
-
 export const createDummyUsers = async (req, res) => {
     try {
 
@@ -31,6 +30,48 @@ export const createDummyUsers = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
+
+export const importDummyProducts = async (req, res) => {
+    try {
+
+        fetch('https://dummyjson.com/products?limit=200&select=title,description,price,reviews,thumbnail')
+            .then(response => response.json())
+            .then(data => {
+                const { products } = data;
+                products.forEach(async (product) => {
+                    const { title, description, price, reviews, thumbnail } = product;
+                    const comments = reviews.map((review) => review.rating);
+                    const newProduct = new Product({
+                        name: title,
+                        description : description.substr(0,200), 
+                        price: (price * 1000),
+                        quantity: faker.number.int({ min: 0, max: 50 }),
+                        comments: comments,
+                        image: thumbnail
+                    });
+                    const productSaved = await newProduct.save();
+                    reviews.forEach(async (review) => {
+                        const { rating, comment, reviewerName } = review;
+                        const newComment = new Comment({
+                            comment, rating,
+                            user: reviewerName,
+                            product: productSaved._id
+                        });
+                        await newComment.save();
+                    });
+
+                    console.log(`Producto ${title} creado correctamente`);
+                });
+                return res.status(201).json({message: 'Productos importados correctamente'});
+            })
+            .catch(error => {
+                return res.status(500).json({ message: error.message });
+            });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+
+}
 
 export const createDummyProducts = async (req, res) => {
     try {
@@ -165,7 +206,7 @@ export const alterStatusOrder = async (req, res) => {
 
 export const replaceImageContentProducts = async (req, res) => {
     try {
-        const { pattern, replace} = req.body;
+        const { pattern, replace } = req.body;
         const products = await Product.find();
 
         for (const product of products) {

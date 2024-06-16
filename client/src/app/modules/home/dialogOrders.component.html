@@ -27,7 +27,7 @@
                 <th mat-header-cell *matHeaderCellDef>Valor</th>
                 <td mat-cell *matCellDef="let element">
                     <span class="mobile-label">Valor:</span>
-                    {{ element.total }}
+                    {{element.total  | currency:  '$ ' : 'symbol' : '1.0-0'}}
                 </td>
             </ng-container>
             <ng-container matColumnDef="state">
