@@ -16,6 +16,7 @@ jobs:
     name: Build and Deploy Job
     steps:
       - run: sudo apt-get update
+      - run: sudo apt-get install nodejs -y
       - uses: actions/checkout@v4
         with:
           submodules: true
