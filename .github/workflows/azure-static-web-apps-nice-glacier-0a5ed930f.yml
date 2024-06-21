@@ -19,9 +19,9 @@ jobs:
         with:
           submodules: true
           lfs: false
-          
+
       - name: Use NodeJs
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20.13.1' # Especifica la versión de Node.js
 
