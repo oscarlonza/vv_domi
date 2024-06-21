@@ -15,12 +15,20 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - run: sudo apt-get update
-      - run: sudo apt-get install nodejs -y
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Angular App
+        run: npm run build
 
       - name: Build And Deploy
         id: builddeploy
@@ -31,9 +39,9 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/client" # App source code path
+          app_location: "/client/dist/domi-store-frontend/browser" # App source code path
           api_location: "" # Api source code path - optional
-          output_location: "dist/domi-store-frontend" # Built app content directory - optional
+          output_location: "" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
