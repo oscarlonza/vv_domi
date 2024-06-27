@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Angular App
         working-directory: ./client
-        run: npm run build
+        run: npm run build:prod
 
       - name: Build And Deploy
         id: builddeploy

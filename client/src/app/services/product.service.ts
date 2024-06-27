@@ -12,6 +12,7 @@ export class ProductService {
   constructor(private requestsService: RequestService) { }
 
   async getProducts(params: any): Promise<BasicResponse> {
+    console.log(`Environment api url >> ${environment.apiUrl}`);
     const result = await this.requestsService.get(`${environment.apiUrl}/products/paginated`, params);
     return result;
   }
